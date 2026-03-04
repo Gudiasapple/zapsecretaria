@@ -130,7 +130,7 @@ export default function Dashboard() {
 
           {/* Sidebar */}
           <div className="space-y-6">
-            {/* Quick Stats */}
+            {/* IA Status Card */}
             <Card className="border-0 shadow-sm bg-gradient-to-br from-violet-600 to-purple-700 text-white">
               <CardContent className="p-6">
                 <div className="flex items-center gap-3 mb-4">
@@ -138,35 +138,56 @@ export default function Dashboard() {
                     <Bot className="w-6 h-6" />
                   </div>
                   <div>
-                    <h3 className="font-semibold">Dra. Maria</h3>
-                    <p className="text-sm text-white/80">Secretária IA</p>
+                    <h3 className="font-semibold">Maria — IA Ativa</h3>
+                    <p className="text-sm text-white/80">Atendendo no WhatsApp 24h</p>
                   </div>
                 </div>
-                <div className="grid grid-cols-2 gap-4 mt-4">
+                <div className="grid grid-cols-2 gap-4 mt-2">
                   <div>
-                    <p className="text-2xl font-bold">{logs.length}</p>
-                    <p className="text-xs text-white/70">Mensagens hoje</p>
+                    <p className="text-2xl font-bold">{agendamentos.filter(ag => {
+                      const d = new Date(ag.created_date);
+                      return isToday(d);
+                    }).length}</p>
+                    <p className="text-xs text-white/70">Agendados hoje</p>
                   </div>
                   <div>
-                    <p className="text-2xl font-bold">98%</p>
-                    <p className="text-xs text-white/70">Taxa de resolução</p>
+                    <p className="text-2xl font-bold">{clientes.length}</p>
+                    <p className="text-xs text-white/70">Pacientes</p>
                   </div>
                 </div>
+                <a
+                  href={base44.agents.getWhatsAppConnectURL('dra_maria')}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="mt-4 flex items-center justify-center gap-2 w-full py-2 rounded-xl bg-white/20 hover:bg-white/30 transition-colors text-sm font-medium"
+                >
+                  <MessageCircle className="w-4 h-4" />
+                  Conectar WhatsApp
+                </a>
               </CardContent>
             </Card>
 
-            {/* Recent Conversations */}
+            {/* Como funciona */}
             <Card className="border-0 shadow-sm">
               <CardHeader className="pb-3">
-                <div className="flex items-center justify-between">
-                  <CardTitle className="text-lg font-semibold flex items-center gap-2">
-                    <MessageCircle className="w-5 h-5 text-violet-600" />
-                    Conversas Recentes
-                  </CardTitle>
-                </div>
+                <CardTitle className="text-base font-semibold flex items-center gap-2">
+                  <Zap className="w-4 h-4 text-amber-500" />
+                  Como funciona
+                </CardTitle>
               </CardHeader>
-              <CardContent>
-                <RecentConversations logs={logs} />
+              <CardContent className="space-y-3 text-sm text-slate-600">
+                <div className="flex gap-3">
+                  <span className="w-6 h-6 rounded-full bg-violet-100 text-violet-700 text-xs flex items-center justify-center font-bold flex-shrink-0">1</span>
+                  <p>Paciente manda mensagem no WhatsApp</p>
+                </div>
+                <div className="flex gap-3">
+                  <span className="w-6 h-6 rounded-full bg-violet-100 text-violet-700 text-xs flex items-center justify-center font-bold flex-shrink-0">2</span>
+                  <p>Maria responde, verifica horários e agenda</p>
+                </div>
+                <div className="flex gap-3">
+                  <span className="w-6 h-6 rounded-full bg-violet-100 text-violet-700 text-xs flex items-center justify-center font-bold flex-shrink-0">3</span>
+                  <p>Agendamento aparece aqui automaticamente</p>
+                </div>
               </CardContent>
             </Card>
           </div>
