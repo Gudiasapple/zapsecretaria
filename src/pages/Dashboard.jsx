@@ -53,23 +53,20 @@ export default function Dashboard() {
   const filteredAgendamentos = agendamentos.filter(ag => {
     if (!ag.data_hora_inicio) return false;
     const agDate = new Date(ag.data_hora_inicio);
-    
-    if (dateFilter === 'hoje') {
-      return isToday(agDate);
-    } else if (dateFilter === 'semana') {
+    if (dateFilter === 'hoje') return isToday(agDate);
+    if (dateFilter === 'semana') {
       return agDate >= startOfWeek(today, { locale: ptBR }) && 
              agDate <= endOfWeek(today, { locale: ptBR });
     }
     return true;
   });
 
-  // Calculate stats
   const todayAgendamentos = agendamentos.filter(ag => 
     ag.data_hora_inicio && isToday(new Date(ag.data_hora_inicio))
   );
   const confirmados = todayAgendamentos.filter(ag => ag.status === 'confirmado').length;
   const pendentes = todayAgendamentos.filter(ag => ag.status === 'pendente').length;
-  const cancelados = agendamentos.filter(ag => ag.status === 'cancelado').length;
+  const agendadosPelaIA = agendamentos.filter(ag => ag.created_by === 'agent').length;
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-violet-50">
