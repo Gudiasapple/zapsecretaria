@@ -291,6 +291,41 @@ export default function Configuracoes() {
                     />
                   </div>
                 </div>
+
+                {/* Separador IA */}
+                <div className="border-t pt-4">
+                  <p className="text-xs font-semibold text-slate-500 uppercase tracking-widest mb-4 flex items-center gap-2">
+                    <Sparkles className="w-3.5 h-3.5" /> Secretária Virtual
+                  </p>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="space-y-2">
+                      <Label>Nome da Secretária</Label>
+                      <div className="relative">
+                        <Bot className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+                        <Input
+                          value={formData.nome_secretaria}
+                          onChange={(e) => setFormData({ ...formData, nome_secretaria: e.target.value })}
+                          placeholder="Ex: Maria, Luisa, Ana..."
+                          className="pl-10"
+                        />
+                      </div>
+                      <p className="text-xs text-slate-400">Nome com que a IA se apresentará no WhatsApp</p>
+                    </div>
+                    <div className="space-y-2">
+                      <Label>Link do Google Calendar</Label>
+                      <div className="relative">
+                        <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+                        <Input
+                          value={formData.google_calendar_link}
+                          onChange={(e) => setFormData({ ...formData, google_calendar_link: e.target.value })}
+                          placeholder="https://calendar.google.com/calendar/..."
+                          className="pl-10"
+                        />
+                      </div>
+                      <p className="text-xs text-slate-400">Cole o link público do seu Google Calendar para acompanhar no celular</p>
+                    </div>
+                  </div>
+                </div>
               </CardContent>
             </Card>
           </TabsContent>
