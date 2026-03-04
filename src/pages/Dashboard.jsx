@@ -122,7 +122,7 @@ export default function Dashboard() {
                 <AgendaTimeline
                   agendamentos={filteredAgendamentos}
                   onStatusChange={handleStatusChange}
-                  onEdit={handleEditAgendamento}
+                  onEdit={() => {}}
                 />
               </CardContent>
             </Card>
