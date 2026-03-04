@@ -1,26 +1,18 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { base44 } from '@/api/base44Client';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { format, startOfDay, endOfDay, startOfWeek, endOfWeek, isToday } from 'date-fns';
+import { format, startOfWeek, endOfWeek, isToday } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import { 
-  Calendar, Users, Clock, CheckCircle2, XCircle, 
-  TrendingUp, Plus, MessageCircle, RefreshCw, Bot
+  Calendar, Users, Clock, CheckCircle2,
+  MessageCircle, RefreshCw, Bot, Zap, Link2
 } from 'lucide-react';
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
 
 import StatsCard from '../components/dashboard/StatsCard';
 import AgendaTimeline from '../components/dashboard/AgendaTimeline';
-import RecentConversations from '../components/dashboard/RecentConversations';
-import AgendamentoForm from '../components/forms/AgendamentoForm';
 
 export default function Dashboard() {
   const queryClient = useQueryClient();
