@@ -194,26 +194,6 @@ export default function Dashboard() {
         </div>
       </div>
 
-      {/* Dialog for Agendamento Form */}
-      <Dialog open={showAgendamentoForm} onOpenChange={setShowAgendamentoForm}>
-        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
-          <DialogHeader>
-            <DialogTitle>
-              {selectedAgendamento ? 'Editar Agendamento' : 'Novo Agendamento'}
-            </DialogTitle>
-          </DialogHeader>
-          <AgendamentoForm
-            agendamento={selectedAgendamento}
-            clientes={clientes}
-            onSubmit={handleSubmitAgendamento}
-            onCancel={() => {
-              setShowAgendamentoForm(false);
-              setSelectedAgendamento(null);
-            }}
-            isLoading={createMutation.isPending || updateMutation.isPending}
-          />
-        </DialogContent>
-      </Dialog>
     </div>
   );
 }
