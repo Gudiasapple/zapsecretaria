@@ -95,28 +95,10 @@ export default function Dashboard() {
 
         {/* Stats */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-          <StatsCard
-            title="Agendamentos Hoje"
-            value={todayAgendamentos.length}
-            icon={Calendar}
-            trend="+12% vs ontem"
-            trendUp
-          />
-          <StatsCard
-            title="Confirmados"
-            value={confirmados}
-            icon={CheckCircle2}
-          />
-          <StatsCard
-            title="Pendentes"
-            value={pendentes}
-            icon={Clock}
-          />
-          <StatsCard
-            title="Total Clientes"
-            value={clientes.length}
-            icon={Users}
-          />
+          <StatsCard title="Agendamentos Hoje" value={todayAgendamentos.length} icon={Calendar} />
+          <StatsCard title="Confirmados" value={confirmados} icon={CheckCircle2} />
+          <StatsCard title="Pendentes" value={pendentes} icon={Clock} />
+          <StatsCard title="Total Clientes" value={clientes.length} icon={Users} />
         </div>
 
         {/* Main Content */}
