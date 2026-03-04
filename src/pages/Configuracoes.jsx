@@ -44,6 +44,7 @@ export default function Configuracoes() {
     mensagem_emergencia: '',
     contato_emergencia: '',
     google_calendar_link: '',
+    icloud_calendar_link: '',
     latitude: null,
     longitude: null,
     profissionais: []
