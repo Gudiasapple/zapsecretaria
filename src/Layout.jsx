@@ -110,7 +110,7 @@ export default function Layout({ children, currentPageName }) {
               <div className="w-6 h-6 rounded-md bg-zinc-900 flex items-center justify-center">
                 <Sparkles className="w-3 h-3 text-white" />
               </div>
-              <span className="font-semibold text-zinc-900 text-sm">ProntaIA</span>
+              <span className="font-semibold text-zinc-900 text-sm">ZapSecretaria</span>
             </div>
             <div className="w-8" />
           </div>
