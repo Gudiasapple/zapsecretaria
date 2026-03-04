@@ -52,6 +52,7 @@ import Clientes from './pages/Clientes';
 import Agenda from './pages/Agenda';
 import Conversas from './pages/Conversas';
 import Configuracoes from './pages/Configuracoes';
+import Relatorios from './pages/Relatorios';
 import __Layout from './Layout.jsx';
 
 
@@ -61,6 +62,7 @@ export const PAGES = {
     "Agenda": Agenda,
     "Conversas": Conversas,
     "Configuracoes": Configuracoes,
+    "Relatorios": Relatorios,
 }
 
 export const pagesConfig = {
