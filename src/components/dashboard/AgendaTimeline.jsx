@@ -1,163 +1,121 @@
 import React from 'react';
-import { Card } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Clock, User, Phone, CheckCircle2, XCircle, MoreHorizontal } from 'lucide-react';
 import { format } from 'date-fns';
-import { ptBR } from 'date-fns/locale';
+import { Clock, User, Phone, CheckCircle2, XCircle, MoreHorizontal } from 'lucide-react';
 import { cn } from "@/lib/utils";
 import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
+  DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 
 const statusConfig = {
-  pendente: { color: "bg-amber-100 text-amber-700 border-amber-200", label: "Pendente" },
-  confirmado: { color: "bg-emerald-100 text-emerald-700 border-emerald-200", label: "Confirmado" },
-  cancelado: { color: "bg-rose-100 text-rose-700 border-rose-200", label: "Cancelado" },
-  remarcado: { color: "bg-blue-100 text-blue-700 border-blue-200", label: "Remarcado" },
-  concluido: { color: "bg-slate-100 text-slate-700 border-slate-200", label: "Concluído" },
-  nao_compareceu: { color: "bg-orange-100 text-orange-700 border-orange-200", label: "Não Compareceu" },
+  pendente:       { dot: 'bg-amber-400',   label: 'Pendente',        badge: 'bg-amber-50 text-amber-700 ring-amber-200' },
+  confirmado:     { dot: 'bg-emerald-400', label: 'Confirmado',      badge: 'bg-emerald-50 text-emerald-700 ring-emerald-200' },
+  cancelado:      { dot: 'bg-zinc-300',    label: 'Cancelado',       badge: 'bg-zinc-50 text-zinc-500 ring-zinc-200' },
+  remarcado:      { dot: 'bg-blue-400',    label: 'Remarcado',       badge: 'bg-blue-50 text-blue-700 ring-blue-200' },
+  concluido:      { dot: 'bg-zinc-400',    label: 'Concluído',       badge: 'bg-zinc-50 text-zinc-600 ring-zinc-200' },
+  nao_compareceu: { dot: 'bg-rose-400',    label: 'Não Compareceu',  badge: 'bg-rose-50 text-rose-700 ring-rose-200' },
 };
 
-const tipoConfig = {
-  consulta: { color: "bg-violet-500", label: "Consulta" },
-  exame: { color: "bg-cyan-500", label: "Exame" },
-  retorno: { color: "bg-emerald-500", label: "Retorno" },
-  procedimento: { color: "bg-rose-500", label: "Procedimento" },
+const tipoLabel = {
+  consulta: 'Consulta', exame: 'Exame', retorno: 'Retorno', procedimento: 'Procedimento',
 };
 
 export default function AgendaTimeline({ agendamentos, onStatusChange, onEdit }) {
-  const sortedAgendamentos = [...agendamentos].sort((a, b) => 
-    new Date(a.data_hora_inicio) - new Date(b.data_hora_inicio)
-  );
+  const sorted = [...agendamentos].sort((a, b) => new Date(a.data_hora_inicio) - new Date(b.data_hora_inicio));
 
-  if (sortedAgendamentos.length === 0) {
+  if (sorted.length === 0) {
     return (
-      <Card className="p-12 text-center border-0 shadow-sm">
-        <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-slate-100 flex items-center justify-center">
-          <Clock className="w-8 h-8 text-slate-400" />
+      <div className="py-16 text-center">
+        <div className="w-12 h-12 mx-auto mb-3 rounded-2xl bg-zinc-100 flex items-center justify-center">
+          <Clock className="w-5 h-5 text-zinc-400" />
         </div>
-        <h3 className="text-lg font-semibold text-slate-900">Nenhum agendamento</h3>
-        <p className="text-slate-500 mt-1">Não há agendamentos para este período</p>
-      </Card>
+        <p className="text-sm font-medium text-zinc-500">Nenhum agendamento neste período</p>
+        <p className="text-xs text-zinc-400 mt-1">A Maria agenda automaticamente via WhatsApp</p>
+      </div>
     );
   }
 
   return (
-    <div className="space-y-3">
-      {sortedAgendamentos.map((agendamento, index) => {
-        const status = statusConfig[agendamento.status] || statusConfig.pendente;
-        const tipo = tipoConfig[agendamento.tipo] || tipoConfig.consulta;
-        const horaInicio = format(new Date(agendamento.data_hora_inicio), 'HH:mm');
-        const horaFim = agendamento.data_hora_fim 
-          ? format(new Date(agendamento.data_hora_fim), 'HH:mm')
-          : null;
+    <div className="space-y-2">
+      {sorted.map((ag) => {
+        const s = statusConfig[ag.status] || statusConfig.pendente;
+        const horaInicio = format(new Date(ag.data_hora_inicio), 'HH:mm');
+        const horaFim = ag.data_hora_fim ? format(new Date(ag.data_hora_fim), 'HH:mm') : null;
+        const isCanceled = ag.status === 'cancelado';
 
         return (
-          <Card 
-            key={agendamento.id} 
+          <div
+            key={ag.id}
             className={cn(
-              "p-4 border-0 shadow-sm hover:shadow-md transition-all duration-300 relative overflow-hidden",
-              agendamento.status === 'cancelado' && "opacity-60"
+              "bg-white rounded-xl border border-zinc-100 px-4 py-3.5 flex items-center gap-4 hover:border-zinc-200 transition-all",
+              isCanceled && "opacity-50"
             )}
           >
-            <div className={cn("absolute left-0 top-0 bottom-0 w-1", tipo.color)} />
-            
-            <div className="flex items-center gap-4 pl-3">
-              <div className="text-center min-w-[60px]">
-                <p className="text-2xl font-bold text-slate-900">{horaInicio}</p>
-                {horaFim && (
-                  <p className="text-xs text-slate-400">{horaFim}</p>
-                )}
+            {/* Hora */}
+            <div className="text-right min-w-[44px] flex-shrink-0">
+              <p className="text-sm font-bold text-zinc-900 tabular-nums">{horaInicio}</p>
+              {horaFim && <p className="text-[10px] text-zinc-400 tabular-nums">{horaFim}</p>}
+            </div>
+
+            {/* Divider */}
+            <div className="w-px h-10 bg-zinc-100 flex-shrink-0" />
+
+            {/* Info */}
+            <div className="flex-1 min-w-0">
+              <div className="flex items-center gap-2 flex-wrap">
+                <p className="text-sm font-semibold text-zinc-900 truncate">{ag.cliente_nome}</p>
+                <span className={cn("inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-semibold ring-1", s.badge)}>
+                  <span className={cn("w-1.5 h-1.5 rounded-full mr-1", s.dot)} />
+                  {s.label}
+                </span>
               </div>
-
-              <div className="h-12 w-px bg-slate-200" />
-
-              <div className="flex-1 min-w-0">
-                <div className="flex items-center gap-2 mb-1">
-                  <h4 className="font-semibold text-slate-900 truncate">
-                    {agendamento.cliente_nome}
-                  </h4>
-                  <Badge variant="outline" className={cn("text-xs", status.color)}>
-                    {status.label}
-                  </Badge>
-                </div>
-                
-                <div className="flex items-center gap-4 text-sm text-slate-500">
-                  <span className="flex items-center gap-1">
-                    <div className={cn("w-2 h-2 rounded-full", tipo.color)} />
-                    {tipo.label}
+              <div className="flex items-center gap-3 mt-1 flex-wrap">
+                <span className="text-[11px] text-zinc-400 font-medium">{tipoLabel[ag.tipo] || ag.tipo}</span>
+                {ag.profissional && (
+                  <span className="text-[11px] text-zinc-400 flex items-center gap-1">
+                    <User className="w-3 h-3" />{ag.profissional}
                   </span>
-                  {agendamento.profissional && (
-                    <span className="flex items-center gap-1">
-                      <User className="w-3.5 h-3.5" />
-                      {agendamento.profissional}
-                    </span>
-                  )}
-                  {agendamento.cliente_telefone && (
-                    <span className="flex items-center gap-1">
-                      <Phone className="w-3.5 h-3.5" />
-                      {agendamento.cliente_telefone}
-                    </span>
-                  )}
-                </div>
-              </div>
-
-              <div className="flex items-center gap-2">
-                {agendamento.status === 'pendente' && (
-                  <>
-                    <Button
-                      size="sm"
-                      variant="ghost"
-                      className="h-8 w-8 p-0 text-emerald-600 hover:text-emerald-700 hover:bg-emerald-50"
-                      onClick={() => onStatusChange?.(agendamento.id, 'confirmado')}
-                    >
-                      <CheckCircle2 className="w-4 h-4" />
-                    </Button>
-                    <Button
-                      size="sm"
-                      variant="ghost"
-                      className="h-8 w-8 p-0 text-rose-600 hover:text-rose-700 hover:bg-rose-50"
-                      onClick={() => onStatusChange?.(agendamento.id, 'cancelado')}
-                    >
-                      <XCircle className="w-4 h-4" />
-                    </Button>
-                  </>
                 )}
-                
-                <DropdownMenu>
-                  <DropdownMenuTrigger asChild>
-                    <Button size="sm" variant="ghost" className="h-8 w-8 p-0">
-                      <MoreHorizontal className="w-4 h-4" />
-                    </Button>
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent align="end">
-                    <DropdownMenuItem onClick={() => onEdit?.(agendamento)}>
-                      Editar
-                    </DropdownMenuItem>
-                    <DropdownMenuItem onClick={() => onStatusChange?.(agendamento.id, 'confirmado')}>
-                      Confirmar
-                    </DropdownMenuItem>
-                    <DropdownMenuItem onClick={() => onStatusChange?.(agendamento.id, 'concluido')}>
-                      Marcar como Concluído
-                    </DropdownMenuItem>
-                    <DropdownMenuItem onClick={() => onStatusChange?.(agendamento.id, 'nao_compareceu')}>
-                      Não Compareceu
-                    </DropdownMenuItem>
-                    <DropdownMenuItem 
-                      onClick={() => onStatusChange?.(agendamento.id, 'cancelado')}
-                      className="text-rose-600"
-                    >
-                      Cancelar
-                    </DropdownMenuItem>
-                  </DropdownMenuContent>
-                </DropdownMenu>
+                {ag.cliente_telefone && (
+                  <span className="text-[11px] text-zinc-400 flex items-center gap-1">
+                    <Phone className="w-3 h-3" />{ag.cliente_telefone}
+                  </span>
+                )}
               </div>
             </div>
-          </Card>
+
+            {/* Actions */}
+            <div className="flex items-center gap-1 flex-shrink-0">
+              {ag.status === 'pendente' && (
+                <>
+                  <button
+                    onClick={() => onStatusChange?.(ag.id, 'confirmado')}
+                    className="w-7 h-7 rounded-lg flex items-center justify-center text-emerald-500 hover:bg-emerald-50 transition-colors"
+                  >
+                    <CheckCircle2 className="w-4 h-4" />
+                  </button>
+                  <button
+                    onClick={() => onStatusChange?.(ag.id, 'cancelado')}
+                    className="w-7 h-7 rounded-lg flex items-center justify-center text-zinc-300 hover:bg-zinc-50 hover:text-rose-500 transition-colors"
+                  >
+                    <XCircle className="w-4 h-4" />
+                  </button>
+                </>
+              )}
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <button className="w-7 h-7 rounded-lg flex items-center justify-center text-zinc-300 hover:bg-zinc-50 hover:text-zinc-600 transition-colors">
+                    <MoreHorizontal className="w-4 h-4" />
+                  </button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end" className="text-xs">
+                  <DropdownMenuItem onClick={() => onStatusChange?.(ag.id, 'confirmado')}>Confirmar</DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => onStatusChange?.(ag.id, 'concluido')}>Marcar Concluído</DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => onStatusChange?.(ag.id, 'nao_compareceu')}>Não Compareceu</DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => onStatusChange?.(ag.id, 'cancelado')} className="text-rose-600">Cancelar</DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            </div>
+          </div>
         );
       })}
     </div>
