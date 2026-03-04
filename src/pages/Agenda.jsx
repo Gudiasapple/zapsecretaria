@@ -42,6 +42,14 @@ export default function Agenda() {
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [showForm, setShowForm] = useState(false);
   const [selectedAgendamento, setSelectedAgendamento] = useState(null);
+
+  // Real-time update when IA creates an appointment
+  useEffect(() => {
+    const unsubscribe = base44.entities.Agendamento.subscribe(() => {
+      queryClient.invalidateQueries({ queryKey: ['agendamentos'] });
+    });
+    return unsubscribe;
+  }, []);
   const [viewMode, setViewMode] = useState('week'); // 'week' or 'day'
 
   const { data: agendamentos = [], isLoading } = useQuery({
