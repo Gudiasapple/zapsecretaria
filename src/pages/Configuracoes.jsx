@@ -12,7 +12,7 @@ import { Switch } from "@/components/ui/switch";
 import { 
   Building2, Clock, MapPin, Phone, Mail, CreditCard,
   Users, Stethoscope, AlertTriangle, Save, Loader2,
-  Plus, X, Bot, MessageSquare
+  Plus, X, Bot, MessageSquare, Calendar, Sparkles
 } from 'lucide-react';
 import { toast } from 'sonner';
 
