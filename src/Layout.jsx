@@ -4,7 +4,7 @@ import { createPageUrl } from '@/utils';
 import { base44 } from '@/api/base44Client';
 import { 
   LayoutDashboard, Calendar, Users, MessageCircle, 
-  Settings, Menu, X, Bot, LogOut, ChevronRight, Sparkles
+  Settings, Menu, X, Bot, LogOut, ChevronRight, Sparkles, TrendingUp
 } from 'lucide-react';
 import { cn } from "@/lib/utils";
 
@@ -39,7 +39,7 @@ export default function Layout({ children, currentPageName }) {
               <Sparkles className="w-4 h-4 text-white" />
             </div>
             <div>
-              <span className="text-[15px] font-semibold tracking-tight text-zinc-900">ProntaIA</span>
+              <span className="text-[15px] font-semibold tracking-tight text-zinc-900">ZapSecretaria</span>
               <p className="text-[11px] text-zinc-400 leading-none mt-0.5">Secretária Inteligente</p>
             </div>
           </div>
