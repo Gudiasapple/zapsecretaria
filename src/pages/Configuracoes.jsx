@@ -28,6 +28,7 @@ export default function Configuracoes() {
 
   const [formData, setFormData] = useState({
     nome_clinica: '',
+    nome_secretaria: 'Maria',
     endereco: '',
     telefone: '',
     whatsapp: '',
@@ -42,6 +43,7 @@ export default function Configuracoes() {
     chave_pix: '',
     mensagem_emergencia: '',
     contato_emergencia: '',
+    google_calendar_link: '',
     latitude: null,
     longitude: null,
     profissionais: []
