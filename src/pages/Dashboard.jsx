@@ -16,13 +16,11 @@ import AgendaTimeline from '../components/dashboard/AgendaTimeline';
 
 export default function Dashboard() {
   const queryClient = useQueryClient();
-  const [showAgendamentoForm, setShowAgendamentoForm] = useState(false);
-  const [selectedAgendamento, setSelectedAgendamento] = useState(null);
   const [dateFilter, setDateFilter] = useState('hoje');
 
   const today = new Date();
 
-  const { data: agendamentos = [], isLoading: loadingAgendamentos } = useQuery({
+  const { data: agendamentos = [] } = useQuery({
     queryKey: ['agendamentos'],
     queryFn: () => base44.entities.Agendamento.list('-data_hora_inicio', 100),
   });
@@ -32,26 +30,10 @@ export default function Dashboard() {
     queryFn: () => base44.entities.Cliente.list('-created_date', 100),
   });
 
-  const { data: logs = [] } = useQuery({
-    queryKey: ['logs'],
-    queryFn: () => base44.entities.LogConversa.list('-created_date', 50),
-  });
-
-  const createMutation = useMutation({
-    mutationFn: (data) => base44.entities.Agendamento.create(data),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['agendamentos'] });
-      setShowAgendamentoForm(false);
-      setSelectedAgendamento(null);
-    },
-  });
-
   const updateMutation = useMutation({
     mutationFn: ({ id, data }) => base44.entities.Agendamento.update(id, data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['agendamentos'] });
-      setShowAgendamentoForm(false);
-      setSelectedAgendamento(null);
     },
   });
 
@@ -59,18 +41,13 @@ export default function Dashboard() {
     await updateMutation.mutateAsync({ id, data: { status } });
   };
 
-  const handleSubmitAgendamento = (data) => {
-    if (selectedAgendamento) {
-      updateMutation.mutate({ id: selectedAgendamento.id, data });
-    } else {
-      createMutation.mutate(data);
-    }
-  };
-
-  const handleEditAgendamento = (agendamento) => {
-    setSelectedAgendamento(agendamento);
-    setShowAgendamentoForm(true);
-  };
+  // Real-time updates from agent
+  useEffect(() => {
+    const unsubscribe = base44.entities.Agendamento.subscribe(() => {
+      queryClient.invalidateQueries({ queryKey: ['agendamentos'] });
+    });
+    return unsubscribe;
+  }, []);
 
   // Filter agendamentos by date
   const filteredAgendamentos = agendamentos.filter(ag => {
