@@ -323,7 +323,51 @@ export default function Configuracoes() {
                           className="pl-10"
                         />
                       </div>
-                      <p className="text-xs text-slate-400">Cole o link público do seu Google Calendar para acompanhar no celular</p>
+                      <p className="text-xs text-slate-400">Cole o link público do seu Google Calendar</p>
+                    </div>
+                  </div>
+
+                  {/* iCloud Calendar */}
+                  <div className="grid grid-cols-1 gap-4 mt-4">
+                    <div className="space-y-2">
+                      <Label className="flex items-center gap-2">
+                        <span className="text-base">🍎</span> Link do iCloud Calendar (iPhone/Mac)
+                      </Label>
+                      <div className="relative">
+                        <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+                        <Input
+                          value={formData.icloud_calendar_link}
+                          onChange={(e) => setFormData({ ...formData, icloud_calendar_link: e.target.value })}
+                          placeholder="webcal://p181-caldav.icloud.com/published/2/..."
+                          className="pl-10 font-mono text-xs"
+                        />
+                      </div>
+                      <div className="bg-slate-50 rounded-lg p-3 text-xs text-slate-500 space-y-1">
+                        <p className="font-medium text-slate-700">Como obter o link do iCloud Calendar:</p>
+                        <p>1. Abra o app <strong>Calendário</strong> no iPhone ou Mac</p>
+                        <p>2. Toque e segure o calendário → <strong>"Compartilhar Calendário"</strong></p>
+                        <p>3. Ative <strong>"Calendário Público"</strong> e copie o link (<code>webcal://...</code>)</p>
+                        <p>4. Cole o link acima e salve</p>
+                      </div>
+                      {formData.icloud_calendar_link && (
+                        <div className="flex gap-2">
+                          <a
+                            href={formData.icloud_calendar_link.replace('webcal://', 'https://')}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="text-xs text-blue-600 hover:underline flex items-center gap-1"
+                          >
+                            <Calendar className="w-3 h-3" /> Abrir no navegador
+                          </a>
+                          <span className="text-slate-300">|</span>
+                          <a
+                            href={formData.icloud_calendar_link}
+                            className="text-xs text-emerald-600 hover:underline flex items-center gap-1"
+                          >
+                            <Calendar className="w-3 h-3" /> Assinar calendário (app)
+                          </a>
+                        </div>
+                      )}
                     </div>
                   </div>
                 </div>
