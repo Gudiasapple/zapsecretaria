@@ -74,33 +74,22 @@ export default function Dashboard() {
         {/* Header */}
         <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
           <div>
-            <h1 className="text-3xl font-bold text-slate-900 tracking-tight">
-              Dashboard
-            </h1>
+            <h1 className="text-3xl font-bold text-slate-900 tracking-tight">Dashboard</h1>
             <p className="text-slate-500 mt-1">
               {format(today, "EEEE, d 'de' MMMM", { locale: ptBR })}
             </p>
           </div>
-          
           <div className="flex gap-3">
-            <Button 
-              variant="outline" 
-              size="sm"
-              onClick={() => queryClient.invalidateQueries()}
-            >
+            <Button variant="outline" size="sm" onClick={() => queryClient.invalidateQueries()}>
               <RefreshCw className="w-4 h-4 mr-2" />
               Atualizar
             </Button>
-            <Button 
-              onClick={() => {
-                setSelectedAgendamento(null);
-                setShowAgendamentoForm(true);
-              }}
-              className="bg-gradient-to-r from-violet-600 to-purple-600 hover:from-violet-700 hover:to-purple-700"
-            >
-              <Plus className="w-4 h-4 mr-2" />
-              Novo Agendamento
-            </Button>
+            <a href={base44.agents.getWhatsAppConnectURL('dra_maria')} target="_blank" rel="noopener noreferrer">
+              <Button className="bg-emerald-600 hover:bg-emerald-700">
+                <MessageCircle className="w-4 h-4 mr-2" />
+                Conectar WhatsApp
+              </Button>
+            </a>
           </div>
         </div>
 
