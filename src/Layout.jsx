@@ -2,18 +2,16 @@ import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
 import { base44 } from '@/api/base44Client';
-import { Button } from "@/components/ui/button";
-import { ScrollArea } from "@/components/ui/scroll-area";
 import { 
   LayoutDashboard, Calendar, Users, MessageCircle, 
-  Settings, Menu, X, Bot, LogOut, ChevronRight
+  Settings, Menu, X, Bot, LogOut, ChevronRight, Sparkles
 } from 'lucide-react';
 import { cn } from "@/lib/utils";
 
 const navigation = [
-  { name: 'Dashboard', icon: LayoutDashboard, page: 'Dashboard' },
+  { name: 'Visão Geral', icon: LayoutDashboard, page: 'Dashboard' },
   { name: 'Agenda', icon: Calendar, page: 'Agenda' },
-  { name: 'Clientes', icon: Users, page: 'Clientes' },
+  { name: 'Pacientes', icon: Users, page: 'Clientes' },
   { name: 'Conversas', icon: MessageCircle, page: 'Conversas' },
   { name: 'Configurações', icon: Settings, page: 'Configuracoes' },
 ];
@@ -21,122 +19,111 @@ const navigation = [
 export default function Layout({ children, currentPageName }) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
-  const handleLogout = () => {
-    base44.auth.logout();
-  };
-
   return (
-    <div className="min-h-screen bg-slate-50">
-      {/* Mobile Sidebar Overlay */}
+    <div className="min-h-screen bg-[#F7F8FA] flex">
+      {/* Overlay mobile */}
       {sidebarOpen && (
-        <div 
-          className="fixed inset-0 bg-black/50 z-40 lg:hidden"
-          onClick={() => setSidebarOpen(false)}
-        />
+        <div className="fixed inset-0 bg-black/30 backdrop-blur-sm z-40 lg:hidden" onClick={() => setSidebarOpen(false)} />
       )}
 
       {/* Sidebar */}
       <aside className={cn(
-        "fixed top-0 left-0 z-50 h-full w-64 bg-white border-r border-slate-200 transform transition-transform duration-300 lg:translate-x-0",
+        "fixed top-0 left-0 z-50 h-full w-60 bg-white border-r border-zinc-100 flex flex-col transition-transform duration-300 lg:translate-x-0",
         sidebarOpen ? "translate-x-0" : "-translate-x-full"
       )}>
-        <div className="flex flex-col h-full">
-          {/* Logo */}
-          <div className="p-6 border-b border-slate-100">
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-violet-600 to-purple-700 flex items-center justify-center shadow-lg shadow-violet-200">
-                <Bot className="w-6 h-6 text-white" />
-              </div>
-              <div>
-                <h1 className="text-xl font-bold text-slate-900">ProntaIA</h1>
-                <p className="text-xs text-slate-500">Secretária Inteligente</p>
-              </div>
+        {/* Logo */}
+        <div className="px-6 py-7 border-b border-zinc-100">
+          <div className="flex items-center gap-3">
+            <div className="w-8 h-8 rounded-lg bg-zinc-900 flex items-center justify-center">
+              <Sparkles className="w-4 h-4 text-white" />
+            </div>
+            <div>
+              <span className="text-[15px] font-semibold tracking-tight text-zinc-900">ProntaIA</span>
+              <p className="text-[11px] text-zinc-400 leading-none mt-0.5">Secretária Inteligente</p>
             </div>
           </div>
+        </div>
 
-          {/* Navigation */}
-          <ScrollArea className="flex-1 py-4">
-            <nav className="px-3 space-y-1">
-              {navigation.map((item) => {
-                const isActive = currentPageName === item.page;
-                return (
-                  <Link
-                    key={item.page}
-                    to={createPageUrl(item.page)}
-                    onClick={() => setSidebarOpen(false)}
-                    className={cn(
-                      "flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all",
-                      isActive 
-                        ? "bg-gradient-to-r from-violet-600 to-purple-600 text-white shadow-md shadow-violet-200" 
-                        : "text-slate-600 hover:bg-slate-100"
-                    )}
-                  >
-                    <item.icon className={cn("w-5 h-5", isActive ? "text-white" : "text-slate-400")} />
-                    {item.name}
-                    {isActive && <ChevronRight className="w-4 h-4 ml-auto" />}
-                  </Link>
-                );
-              })}
-            </nav>
-          </ScrollArea>
+        {/* Nav */}
+        <nav className="flex-1 px-3 py-4 space-y-0.5 overflow-y-auto">
+          {navigation.map((item) => {
+            const isActive = currentPageName === item.page;
+            return (
+              <Link
+                key={item.page}
+                to={createPageUrl(item.page)}
+                onClick={() => setSidebarOpen(false)}
+                className={cn(
+                  "flex items-center gap-3 px-3 py-2.5 rounded-lg text-[13px] font-medium transition-all group",
+                  isActive
+                    ? "bg-zinc-900 text-white"
+                    : "text-zinc-500 hover:text-zinc-900 hover:bg-zinc-50"
+                )}
+              >
+                <item.icon className={cn("w-4 h-4 flex-shrink-0", isActive ? "text-white" : "text-zinc-400 group-hover:text-zinc-600")} />
+                {item.name}
+              </Link>
+            );
+          })}
+        </nav>
 
-          {/* WhatsApp Link */}
-          <div className="p-4 border-t border-slate-100">
-            <a
-              href={base44.agents.getWhatsAppConnectURL('dra_maria')}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="flex items-center gap-3 px-4 py-3 bg-emerald-50 rounded-xl text-emerald-700 hover:bg-emerald-100 transition-colors"
-            >
-              <div className="w-8 h-8 rounded-lg bg-emerald-500 flex items-center justify-center">
-                <MessageCircle className="w-4 h-4 text-white" />
-              </div>
-              <div className="flex-1">
-                <p className="text-sm font-medium">WhatsApp</p>
-                <p className="text-xs text-emerald-600">Conectar agente</p>
-              </div>
-            </a>
-          </div>
+        {/* WhatsApp CTA */}
+        <div className="px-3 pb-2">
+          <a
+            href={base44.agents.getWhatsAppConnectURL('dra_maria')}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex items-center gap-3 px-3 py-3 rounded-lg bg-emerald-50 hover:bg-emerald-100 transition-colors group"
+          >
+            <div className="w-7 h-7 rounded-md bg-emerald-500 flex items-center justify-center flex-shrink-0">
+              <MessageCircle className="w-3.5 h-3.5 text-white" />
+            </div>
+            <div className="min-w-0">
+              <p className="text-[12px] font-semibold text-emerald-800">Conectar WhatsApp</p>
+              <p className="text-[11px] text-emerald-600">Ativar atendimento via IA</p>
+            </div>
+          </a>
+        </div>
 
-          {/* Logout */}
-          <div className="p-4 border-t border-slate-100">
-            <Button
-              variant="ghost"
-              onClick={handleLogout}
-              className="w-full justify-start text-slate-500 hover:text-slate-900"
-            >
-              <LogOut className="w-4 h-4 mr-3" />
-              Sair
-            </Button>
-          </div>
+        {/* Logout */}
+        <div className="px-3 pb-5 pt-1 border-t border-zinc-100 mt-1">
+          <button
+            onClick={() => base44.auth.logout()}
+            className="flex items-center gap-3 px-3 py-2.5 w-full rounded-lg text-[13px] text-zinc-400 hover:text-zinc-700 hover:bg-zinc-50 transition-all"
+          >
+            <LogOut className="w-4 h-4" />
+            Sair
+          </button>
         </div>
       </aside>
 
-      {/* Main Content */}
-      <div className="lg:pl-64">
-        {/* Mobile Header */}
-        <header className="sticky top-0 z-30 bg-white/80 backdrop-blur-sm border-b border-slate-200 lg:hidden">
-          <div className="flex items-center justify-between px-4 h-16">
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={() => setSidebarOpen(true)}
-            >
-              <Menu className="w-5 h-5" />
-            </Button>
+      {/* Main */}
+      <div className="flex-1 lg:ml-60 flex flex-col min-h-screen">
+        {/* Mobile header */}
+        <header className="sticky top-0 z-30 bg-white/80 backdrop-blur-md border-b border-zinc-100 lg:hidden">
+          <div className="flex items-center justify-between px-4 h-14">
+            <button onClick={() => setSidebarOpen(true)} className="p-1.5 rounded-md hover:bg-zinc-100">
+              <Menu className="w-5 h-5 text-zinc-600" />
+            </button>
             <div className="flex items-center gap-2">
-              <Bot className="w-6 h-6 text-violet-600" />
-              <span className="font-bold text-slate-900">ProntaIA</span>
+              <div className="w-6 h-6 rounded-md bg-zinc-900 flex items-center justify-center">
+                <Sparkles className="w-3 h-3 text-white" />
+              </div>
+              <span className="font-semibold text-zinc-900 text-sm">ProntaIA</span>
             </div>
-            <div className="w-10" />
+            <div className="w-8" />
           </div>
         </header>
 
-        {/* Page Content */}
-        <main>
+        <main className="flex-1">
           {children}
         </main>
       </div>
+
+      <style>{`
+        * { -webkit-font-smoothing: antialiased; }
+        body { font-family: 'Inter', system-ui, sans-serif; }
+      `}</style>
     </div>
   );
 }
