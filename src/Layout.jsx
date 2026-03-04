@@ -13,6 +13,7 @@ const navigation = [
   { name: 'Agenda', icon: Calendar, page: 'Agenda' },
   { name: 'Pacientes', icon: Users, page: 'Clientes' },
   { name: 'Conversas', icon: MessageCircle, page: 'Conversas' },
+  { name: 'Relatórios', icon: TrendingUp, page: 'Relatorios' },
   { name: 'Configurações', icon: Settings, page: 'Configuracoes' },
 ];
 
