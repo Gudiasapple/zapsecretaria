@@ -164,12 +164,19 @@ export default function Agenda() {
                 <ChevronRight className="w-4 h-4" />
               </Button>
             </div>
+            <Button
+              variant="outline"
+              onClick={() => setShowDisparo(true)}
+              className="border-amber-300 text-amber-700 hover:bg-amber-50"
+            >
+              <BellOff className="w-4 h-4 mr-2" />
+              Cancelar dia
+            </Button>
             <Button 
               onClick={() => {
                 setSelectedAgendamento(null);
                 setShowForm(true);
               }}
-
               className="bg-gradient-to-r from-violet-600 to-purple-600 hover:from-violet-700 hover:to-purple-700"
             >
               <Plus className="w-4 h-4 mr-2" />
