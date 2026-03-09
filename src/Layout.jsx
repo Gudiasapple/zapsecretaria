@@ -15,6 +15,7 @@ const navigation = [
   { name: 'Conversas', icon: MessageCircle, page: 'Conversas' },
   { name: 'Relatórios', icon: TrendingUp, page: 'Relatorios' },
   { name: 'Configurações', icon: Settings, page: 'Configuracoes' },
+  { name: 'Conectar WhatsApp', icon: MessageCircle, page: 'ConectarWhatsApp' },
 ];
 
 export default function Layout({ children, currentPageName }) {
