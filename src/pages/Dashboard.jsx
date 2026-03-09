@@ -96,15 +96,13 @@ export default function Dashboard() {
               <RefreshCw className="w-3.5 h-3.5" />
               Atualizar
             </button>
-            <a
-              href={base44.agents.getWhatsAppConnectURL('dra_maria')}
-              target="_blank"
-              rel="noopener noreferrer"
+            <button
+              onClick={() => navigate(createPageUrl('ConectarWhatsApp'))}
               className="flex items-center gap-2 px-4 py-2 bg-zinc-900 hover:bg-zinc-800 text-white text-xs font-semibold rounded-lg transition-all"
             >
               <MessageCircle className="w-3.5 h-3.5" />
               Conectar WhatsApp
-            </a>
+            </button>
           </div>
         </div>
 
