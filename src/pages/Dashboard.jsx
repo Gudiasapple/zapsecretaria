@@ -172,15 +172,13 @@ export default function Dashboard() {
                 </div>
               </div>
 
-              <a
-                href={base44.agents.getWhatsAppConnectURL('dra_maria')}
-                target="_blank"
-                rel="noopener noreferrer"
+              <button
+                onClick={() => navigate(createPageUrl('ConectarWhatsApp'))}
                 className="flex items-center justify-center gap-2 w-full py-2.5 rounded-xl bg-white/10 hover:bg-white/20 transition-colors text-xs font-semibold"
               >
                 <MessageCircle className="w-3.5 h-3.5" />
                 Conectar WhatsApp
-              </a>
+              </button>
             </div>
 
             {/* Fluxo */}
