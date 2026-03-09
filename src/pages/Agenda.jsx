@@ -63,7 +63,12 @@ export default function Agenda() {
   });
 
   const createMutation = useMutation({
-    mutationFn: (data) => base44.entities.Agendamento.create(data),
+    mutationFn: async (data) => {
+      const ag = await base44.entities.Agendamento.create(data);
+      // Cria evento no Google Calendar em background
+      base44.functions.invoke('googleCalendarEvent', { agendamento: { ...data, id: ag.id } }).catch(() => {});
+      return ag;
+    },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['agendamentos'] });
       setShowForm(false);
@@ -71,7 +76,12 @@ export default function Agenda() {
   });
 
   const updateMutation = useMutation({
-    mutationFn: ({ id, data }) => base44.entities.Agendamento.update(id, data),
+    mutationFn: async ({ id, data }) => {
+      const ag = await base44.entities.Agendamento.update(id, data);
+      // Atualiza/cria evento no Google Calendar em background
+      base44.functions.invoke('googleCalendarEvent', { agendamento: { ...data, id } }).catch(() => {});
+      return ag;
+    },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['agendamentos'] });
       setShowForm(false);
