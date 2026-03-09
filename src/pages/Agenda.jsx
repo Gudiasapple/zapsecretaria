@@ -52,14 +52,25 @@ export default function Agenda() {
   }, []);
   const [viewMode, setViewMode] = useState('week'); // 'week' or 'day'
 
+  const [userEmail, setUserEmail] = useState(null);
+  useEffect(() => {
+    base44.auth.me().then(u => setUserEmail(u?.email));
+  }, []);
+
   const { data: agendamentos = [], isLoading } = useQuery({
-    queryKey: ['agendamentos'],
-    queryFn: () => base44.entities.Agendamento.list('-data_hora_inicio'),
+    queryKey: ['agendamentos', userEmail],
+    queryFn: () => userEmail
+      ? base44.entities.Agendamento.filter({ created_by: userEmail }, '-data_hora_inicio')
+      : [],
+    enabled: !!userEmail,
   });
 
   const { data: clientes = [] } = useQuery({
-    queryKey: ['clientes'],
-    queryFn: () => base44.entities.Cliente.list(),
+    queryKey: ['clientes', userEmail],
+    queryFn: () => userEmail
+      ? base44.entities.Cliente.filter({ created_by: userEmail })
+      : [],
+    enabled: !!userEmail,
   });
 
   const createMutation = useMutation({
