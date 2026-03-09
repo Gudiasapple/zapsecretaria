@@ -21,7 +21,10 @@ Deno.serve(async (req) => {
   const url = `https://api.z-api.io/instances/${INSTANCE_ID}/token/${TOKEN}/send-text`;
   const response = await fetch(url, {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
+    headers: { 
+      'Content-Type': 'application/json',
+      'Client-Token': CLIENT_TOKEN
+    },
     body: JSON.stringify({ phone, message })
   });
 

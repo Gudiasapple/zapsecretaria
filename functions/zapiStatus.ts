@@ -13,7 +13,9 @@ Deno.serve(async (req) => {
   }
 
   const url = `https://api.z-api.io/instances/${INSTANCE_ID}/token/${TOKEN}/status`;
-  const response = await fetch(url);
+  const response = await fetch(url, {
+    headers: { 'Client-Token': CLIENT_TOKEN }
+  });
   const result = await response.json();
 
   return Response.json(result);
