@@ -93,10 +93,20 @@ export default function ConectarWhatsApp() {
               <p className="text-sm text-zinc-500 mb-6">
                 A secretária virtual está ativa e pronta para atender seus pacientes.
               </p>
-              <div className="flex items-center justify-center gap-2 text-emerald-600 text-sm font-medium">
+              <div className="flex items-center justify-center gap-2 text-emerald-600 text-sm font-medium mb-6">
                 <Wifi className="w-4 h-4" />
                 Instância ZapSecretarIA online
               </div>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={handleDisconnect}
+                disabled={disconnecting}
+                className="gap-2 text-rose-600 border-rose-200 hover:bg-rose-50"
+              >
+                {disconnecting ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <LogOut className="w-3.5 h-3.5" />}
+                Desconectar WhatsApp
+              </Button>
             </div>
           )}
 
