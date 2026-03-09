@@ -43,6 +43,7 @@ export default function Agenda() {
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [showForm, setShowForm] = useState(false);
   const [selectedAgendamento, setSelectedAgendamento] = useState(null);
+  const [showDisparo, setShowDisparo] = useState(false);
 
   // Real-time update when IA creates an appointment
   useEffect(() => {
