@@ -25,7 +25,7 @@ Deno.serve(async (req) => {
     return Response.json({ error: 'Unauthorized' }, { status: 401 });
   }
 
-  const { data, motivo } = await req.json();
+  const { data, motivo, periodo, horarioEspecifico } = await req.json();
 
   if (!data) {
     return Response.json({ error: 'data é obrigatória' }, { status: 400 });
@@ -39,9 +39,18 @@ Deno.serve(async (req) => {
     if (!ag.data_hora_inicio) return false;
     if (ag.status === 'cancelado') return false;
     const agData = new Date(ag.data_hora_inicio);
-    return agData.getFullYear() === dataAlvo.getFullYear() &&
-           agData.getMonth() === dataAlvo.getMonth() &&
-           agData.getDate() === dataAlvo.getDate();
+    const mesmodia = agData.getFullYear() === dataAlvo.getFullYear() &&
+                     agData.getMonth() === dataAlvo.getMonth() &&
+                     agData.getDate() === dataAlvo.getDate();
+    if (!mesmodia) return false;
+
+    if (periodo === 'manha') return agData.getHours() < 12;
+    if (periodo === 'tarde') return agData.getHours() >= 12;
+    if (periodo === 'especifico' && horarioEspecifico) {
+      const [h, m] = horarioEspecifico.split(':').map(Number);
+      return agData.getHours() === h && agData.getMinutes() === m;
+    }
+    return true;
   });
 
   if (agendamentosDoDia.length === 0) {
