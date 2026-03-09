@@ -101,7 +101,7 @@ export default function Agenda() {
   });
 
   const handleSubmit = (data) => {
-    if (selectedAgendamento) {
+    if (selectedAgendamento?.id) {
       updateMutation.mutate({ id: selectedAgendamento.id, data });
     } else {
       createMutation.mutate(data);
