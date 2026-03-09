@@ -286,7 +286,7 @@ export default function Agenda() {
         <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle>
-              {selectedAgendamento ? 'Editar Agendamento' : 'Novo Agendamento'}
+              {selectedAgendamento?.id ? 'Editar Agendamento' : 'Novo Agendamento'}
             </DialogTitle>
           </DialogHeader>
           <AgendamentoForm
