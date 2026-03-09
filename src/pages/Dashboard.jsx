@@ -1,39 +1,61 @@
 import React, { useState, useEffect } from 'react';
 import { base44 } from '@/api/base44Client';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { format, startOfWeek, endOfWeek, isToday } from 'date-fns';
+import { format, startOfWeek, endOfWeek, isToday, subDays, startOfDay, endOfDay, isWithinInterval } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
-import { Calendar, Users, Clock, CheckCircle2, MessageCircle, RefreshCw, Bot, TrendingUp, ArrowRight } from 'lucide-react';
+import { Calendar, Users, Clock, CheckCircle2, MessageCircle, Bot, TrendingUp, ArrowRight, Zap, Activity } from 'lucide-react';
 import { cn } from "@/lib/utils";
 import { Link, useNavigate } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
+import { useTheme } from '../Layout';
+import { AreaChart, Area, ResponsiveContainer, Tooltip, XAxis } from 'recharts';
 import AgendaTimeline from '../components/dashboard/AgendaTimeline';
 
-function StatCard({ label, value, icon: Icon, color = 'zinc' }) {
-  const colors = {
-    zinc:    { bg: 'bg-zinc-900',    text: 'text-zinc-900',    light: 'bg-zinc-50',   icon: 'text-white' },
-    emerald: { bg: 'bg-emerald-500', text: 'text-emerald-700', light: 'bg-emerald-50', icon: 'text-white' },
-    amber:   { bg: 'bg-amber-500',   text: 'text-amber-700',   light: 'bg-amber-50',  icon: 'text-white' },
-    blue:    { bg: 'bg-blue-500',    text: 'text-blue-700',    light: 'bg-blue-50',   icon: 'text-white' },
+function KpiCard({ label, value, icon: Icon, accent = 'violet', trend, dark }) {
+  const accents = {
+    violet: { grad: 'from-violet-500 to-indigo-500', glow: 'shadow-violet-500/20', badge: dark ? 'text-violet-300 bg-violet-500/10' : 'text-violet-700 bg-violet-50' },
+    emerald: { grad: 'from-emerald-400 to-teal-500', glow: 'shadow-emerald-500/20', badge: dark ? 'text-emerald-300 bg-emerald-500/10' : 'text-emerald-700 bg-emerald-50' },
+    amber: { grad: 'from-amber-400 to-orange-500', glow: 'shadow-amber-500/20', badge: dark ? 'text-amber-300 bg-amber-500/10' : 'text-amber-700 bg-amber-50' },
+    blue: { grad: 'from-blue-400 to-cyan-500', glow: 'shadow-blue-500/20', badge: dark ? 'text-blue-300 bg-blue-500/10' : 'text-blue-700 bg-blue-50' },
   };
-  const c = colors[color];
+  const a = accents[accent];
   return (
-    <div className="bg-white rounded-2xl p-5 border border-zinc-100 flex items-center gap-4">
-      <div className={cn("w-11 h-11 rounded-xl flex items-center justify-center flex-shrink-0", c.bg)}>
-        <Icon className={cn("w-5 h-5", c.icon)} />
+    <div className={cn(
+      "rounded-2xl p-5 border transition-all hover:scale-[1.01] cursor-default",
+      dark ? "bg-[#13131C] border-white/5 hover:border-white/10" : "bg-white border-zinc-100 hover:border-zinc-200 hover:shadow-md"
+    )}>
+      <div className="flex items-start justify-between mb-4">
+        <div className={cn("w-10 h-10 rounded-xl flex items-center justify-center bg-gradient-to-br shadow-lg", a.grad, a.glow)}>
+          <Icon className="w-5 h-5 text-white" />
+        </div>
+        {trend !== undefined && (
+          <span className={cn("text-[11px] font-semibold px-2 py-0.5 rounded-full", a.badge)}>
+            {trend > 0 ? '+' : ''}{trend}%
+          </span>
+        )}
       </div>
-      <div>
-        <p className="text-2xl font-bold text-zinc-900 leading-none">{value}</p>
-        <p className="text-xs text-zinc-400 mt-1 font-medium">{label}</p>
-      </div>
+      <p className={cn("text-3xl font-bold tracking-tight", dark ? "text-white" : "text-zinc-900")}>{value}</p>
+      <p className={cn("text-[12px] font-medium mt-1", dark ? "text-white/40" : "text-zinc-400")}>{label}</p>
     </div>
   );
 }
 
+const MiniTooltip = ({ active, payload, dark }) => {
+  if (active && payload?.length) {
+    return (
+      <div className={cn("text-xs px-2.5 py-1.5 rounded-lg shadow-xl border", dark ? "bg-[#1a1a28] border-white/10 text-white" : "bg-white border-zinc-100 text-zinc-900")}>
+        {payload[0].value} consultas
+      </div>
+    );
+  }
+  return null;
+};
+
 const filterLabels = ['hoje', 'semana', 'todos'];
-const filterNames  = { hoje: 'Hoje', semana: 'Esta semana', todos: 'Todos' };
+const filterNames = { hoje: 'Hoje', semana: 'Semana', todos: 'Todos' };
 
 export default function Dashboard() {
+  const { dark } = useTheme();
   const queryClient = useQueryClient();
   const navigate = useNavigate();
   const [dateFilter, setDateFilter] = useState('hoje');
@@ -46,16 +68,13 @@ export default function Dashboard() {
 
   const { data: agendamentos = [] } = useQuery({
     queryKey: ['agendamentos', userEmail],
-    queryFn: () => userEmail
-      ? base44.entities.Agendamento.filter({ created_by: userEmail }, '-data_hora_inicio', 100)
-      : [],
+    queryFn: () => userEmail ? base44.entities.Agendamento.filter({ created_by: userEmail }, '-data_hora_inicio', 200) : [],
     enabled: !!userEmail,
   });
+
   const { data: clientes = [] } = useQuery({
     queryKey: ['clientes', userEmail],
-    queryFn: () => userEmail
-      ? base44.entities.Cliente.filter({ created_by: userEmail }, '-created_date', 100)
-      : [],
+    queryFn: () => userEmail ? base44.entities.Cliente.filter({ created_by: userEmail }, '-created_date', 200) : [],
     enabled: !!userEmail,
   });
 
@@ -73,73 +92,84 @@ export default function Dashboard() {
 
   const todayAg = agendamentos.filter(ag => ag.data_hora_inicio && isToday(new Date(ag.data_hora_inicio)));
   const confirmados = todayAg.filter(ag => ag.status === 'confirmado').length;
-  const pendentes   = todayAg.filter(ag => ag.status === 'pendente').length;
+  const pendentes = todayAg.filter(ag => ag.status === 'pendente').length;
 
   const filtered = agendamentos.filter(ag => {
     if (!ag.data_hora_inicio) return false;
     const d = new Date(ag.data_hora_inicio);
-    if (dateFilter === 'hoje')   return isToday(d);
+    if (dateFilter === 'hoje') return isToday(d);
     if (dateFilter === 'semana') return d >= startOfWeek(today, { locale: ptBR }) && d <= endOfWeek(today, { locale: ptBR });
     return true;
   });
 
-  const agHoje = agendamentos.filter(ag => ag.data_hora_inicio && isToday(new Date(ag.created_date))).length;
+  // Sparkline data (últimos 7 dias)
+  const sparkData = Array.from({ length: 7 }, (_, i) => {
+    const d = subDays(today, 6 - i);
+    const count = agendamentos.filter(ag => {
+      if (!ag.data_hora_inicio) return false;
+      return isWithinInterval(new Date(ag.data_hora_inicio), { start: startOfDay(d), end: endOfDay(d) });
+    }).length;
+    return { date: format(d, 'dd/MM'), count };
+  });
+
+  const { data: conversas = [] } = useQuery({
+    queryKey: ['whatsapp-conversations'],
+    queryFn: () => base44.agents.listConversations({ agent_name: 'dra_maria' }),
+  });
+
+  const convHoje = conversas.filter(c => c.updated_date && isToday(new Date(c.updated_date))).length;
 
   return (
-    <div className="min-h-screen bg-[#F7F8FA]">
-      <div className="max-w-6xl mx-auto px-6 py-8 space-y-8">
+    <div className={cn("min-h-screen px-4 py-8 md:px-8", dark ? "bg-[#0A0A0F]" : "bg-[#F5F6FA]")}>
+      <div className="max-w-6xl mx-auto space-y-8">
 
         {/* Header */}
-        <div className="flex items-center justify-between">
+        <div className="flex items-start justify-between">
           <div>
-            <p className="text-xs font-semibold text-zinc-400 uppercase tracking-widest mb-1">
+            <p className={cn("text-xs font-semibold uppercase tracking-[0.15em] mb-1.5", dark ? "text-violet-400" : "text-violet-500")}>
               {format(today, "EEEE", { locale: ptBR })}
             </p>
-            <h1 className="text-2xl font-bold text-zinc-900 tracking-tight">
+            <h1 className={cn("text-3xl font-bold tracking-tight", dark ? "text-white" : "text-zinc-900")}>
               {format(today, "d 'de' MMMM", { locale: ptBR })}
             </h1>
+            <p className={cn("text-sm mt-1", dark ? "text-white/30" : "text-zinc-400")}>
+              {todayAg.length} consultas agendadas hoje
+            </p>
           </div>
-          <div className="flex items-center gap-2">
-            <button
-              onClick={() => queryClient.invalidateQueries()}
-              className="flex items-center gap-1.5 px-3 py-2 text-xs font-medium text-zinc-500 hover:text-zinc-900 hover:bg-white rounded-lg border border-zinc-200 transition-all"
-            >
-              <RefreshCw className="w-3.5 h-3.5" />
-              Atualizar
-            </button>
-            <button
-              onClick={() => navigate(createPageUrl('ConectarWhatsApp'))}
-              className="flex items-center gap-2 px-4 py-2 bg-zinc-900 hover:bg-zinc-800 text-white text-xs font-semibold rounded-lg transition-all"
-            >
-              <MessageCircle className="w-3.5 h-3.5" />
-              Conectar WhatsApp
-            </button>
-          </div>
+          <button
+            onClick={() => navigate(createPageUrl('ConectarWhatsApp'))}
+            className="flex items-center gap-2 px-4 py-2.5 bg-gradient-to-r from-violet-600 to-indigo-600 hover:from-violet-700 hover:to-indigo-700 text-white text-xs font-semibold rounded-xl transition-all shadow-lg shadow-violet-500/25 hover:shadow-violet-500/40"
+          >
+            <Zap className="w-3.5 h-3.5" />
+            Conectar WhatsApp
+          </button>
         </div>
 
-        {/* Stats */}
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
-          <StatCard label="Consultas hoje"  value={todayAg.length}  icon={Calendar}      color="zinc"    />
-          <StatCard label="Confirmados"     value={confirmados}      icon={CheckCircle2}  color="emerald" />
-          <StatCard label="Pendentes"       value={pendentes}        icon={Clock}         color="amber"   />
-          <StatCard label="Pacientes"       value={clientes.length}  icon={Users}         color="blue"    />
+        {/* KPIs */}
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+          <KpiCard label="Consultas hoje" value={todayAg.length} icon={Calendar} accent="violet" dark={dark} />
+          <KpiCard label="Confirmados" value={confirmados} icon={CheckCircle2} accent="emerald" dark={dark} />
+          <KpiCard label="Pendentes" value={pendentes} icon={Clock} accent="amber" dark={dark} />
+          <KpiCard label="Total de pacientes" value={clientes.length} icon={Users} accent="blue" dark={dark} />
         </div>
 
-        {/* Content */}
+        {/* Body */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
 
           {/* Agenda */}
           <div className="lg:col-span-2 space-y-4">
             <div className="flex items-center justify-between">
-              <h2 className="text-sm font-semibold text-zinc-900">Agenda</h2>
-              <div className="flex bg-white border border-zinc-200 rounded-lg p-0.5 gap-0.5">
+              <h2 className={cn("text-sm font-bold uppercase tracking-widest", dark ? "text-white/50" : "text-zinc-400")}>Agenda</h2>
+              <div className={cn("flex p-0.5 rounded-lg border gap-0.5", dark ? "bg-white/5 border-white/5" : "bg-white border-zinc-200")}>
                 {filterLabels.map(f => (
                   <button
                     key={f}
                     onClick={() => setDateFilter(f)}
                     className={cn(
-                      "px-3 py-1 text-xs font-medium rounded-md transition-all",
-                      dateFilter === f ? "bg-zinc-900 text-white" : "text-zinc-400 hover:text-zinc-700"
+                      "px-3 py-1 text-xs font-semibold rounded-md transition-all",
+                      dateFilter === f
+                        ? dark ? "bg-violet-600 text-white" : "bg-violet-600 text-white"
+                        : dark ? "text-white/30 hover:text-white/60" : "text-zinc-400 hover:text-zinc-700"
                     )}
                   >
                     {filterNames[f]}
@@ -151,6 +181,7 @@ export default function Dashboard() {
               agendamentos={filtered}
               onStatusChange={(id, status) => updateMutation.mutate({ id, data: { status } })}
               onEdit={() => {}}
+              dark={dark}
             />
           </div>
 
@@ -158,73 +189,89 @@ export default function Dashboard() {
           <div className="space-y-4">
 
             {/* IA Card */}
-            <div className="bg-zinc-900 rounded-2xl p-6 text-white">
-              <div className="flex items-center gap-3 mb-5">
-                <div className="w-9 h-9 rounded-xl bg-white/10 flex items-center justify-center">
-                  <Bot className="w-5 h-5 text-white" />
-                </div>
-                <div>
-                  <p className="text-sm font-semibold">Maria</p>
-                  <div className="flex items-center gap-1.5 mt-0.5">
-                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
-                    <p className="text-xs text-zinc-400">Ativa no WhatsApp</p>
+            <div className="relative rounded-2xl p-6 overflow-hidden bg-gradient-to-br from-violet-600 via-indigo-600 to-purple-700">
+              <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,rgba(255,255,255,0.08),transparent_60%)]" />
+              <div className="relative">
+                <div className="flex items-center gap-3 mb-5">
+                  <div className="w-10 h-10 rounded-xl bg-white/15 flex items-center justify-center backdrop-blur-sm">
+                    <Bot className="w-5 h-5 text-white" />
+                  </div>
+                  <div>
+                    <p className="text-sm font-bold text-white">Secretária IA</p>
+                    <div className="flex items-center gap-1.5 mt-0.5">
+                      <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+                      <p className="text-[11px] text-white/60">Ativa no WhatsApp</p>
+                    </div>
                   </div>
                 </div>
-              </div>
 
-              <div className="grid grid-cols-2 gap-4 mb-5">
-                <div className="bg-white/5 rounded-xl p-3">
-                  <p className="text-xl font-bold">{agHoje}</p>
-                  <p className="text-xs text-zinc-400 mt-0.5">Agendados hoje</p>
+                <div className="grid grid-cols-2 gap-3 mb-5">
+                  <div className="bg-white/10 backdrop-blur-sm rounded-xl p-3 border border-white/10">
+                    <p className="text-2xl font-bold text-white">{todayAg.length}</p>
+                    <p className="text-[11px] text-white/50 mt-0.5">Consultas hoje</p>
+                  </div>
+                  <div className="bg-white/10 backdrop-blur-sm rounded-xl p-3 border border-white/10">
+                    <p className="text-2xl font-bold text-white">{convHoje}</p>
+                    <p className="text-[11px] text-white/50 mt-0.5">Conv. hoje</p>
+                  </div>
                 </div>
-                <div className="bg-white/5 rounded-xl p-3">
-                  <p className="text-xl font-bold">{clientes.length}</p>
-                  <p className="text-xs text-zinc-400 mt-0.5">Pacientes</p>
-                </div>
-              </div>
 
-              <button
-                onClick={() => navigate(createPageUrl('ConectarWhatsApp'))}
-                className="flex items-center justify-center gap-2 w-full py-2.5 rounded-xl bg-white/10 hover:bg-white/20 transition-colors text-xs font-semibold"
-              >
-                <MessageCircle className="w-3.5 h-3.5" />
-                Conectar WhatsApp
-              </button>
+                {/* Mini sparkline */}
+                <div className="mb-5">
+                  <p className="text-[10px] text-white/40 font-semibold uppercase tracking-widest mb-2">Últimos 7 dias</p>
+                  <ResponsiveContainer width="100%" height={48}>
+                    <AreaChart data={sparkData}>
+                      <defs>
+                        <linearGradient id="sparkGrad" x1="0" y1="0" x2="0" y2="1">
+                          <stop offset="0%" stopColor="rgba(255,255,255,0.3)" />
+                          <stop offset="100%" stopColor="rgba(255,255,255,0)" />
+                        </linearGradient>
+                      </defs>
+                      <Area type="monotone" dataKey="count" stroke="rgba(255,255,255,0.5)" strokeWidth={2} fill="url(#sparkGrad)" dot={false} />
+                      <Tooltip content={({ active, payload }) => <MiniTooltip active={active} payload={payload} dark={true} />} />
+                    </AreaChart>
+                  </ResponsiveContainer>
+                </div>
+
+                <button
+                  onClick={() => navigate(createPageUrl('ConectarWhatsApp'))}
+                  className="flex items-center justify-center gap-2 w-full py-2.5 rounded-xl bg-white/15 hover:bg-white/25 transition-colors text-xs font-semibold text-white border border-white/10"
+                >
+                  <MessageCircle className="w-3.5 h-3.5" />
+                  Gerenciar conexão
+                </button>
+              </div>
             </div>
 
-            {/* Fluxo */}
-            <div className="bg-white rounded-2xl border border-zinc-100 p-5">
-              <h3 className="text-xs font-semibold text-zinc-500 uppercase tracking-widest mb-4">Como funciona</h3>
-              <div className="space-y-4">
+            {/* Atividade recente */}
+            <div className={cn("rounded-2xl p-5 border", dark ? "bg-[#13131C] border-white/5" : "bg-white border-zinc-100")}>
+              <div className="flex items-center justify-between mb-4">
+                <h3 className={cn("text-xs font-bold uppercase tracking-widest", dark ? "text-white/30" : "text-zinc-400")}>
+                  Navegação Rápida
+                </h3>
+                <Activity className={cn("w-3.5 h-3.5", dark ? "text-white/20" : "text-zinc-300")} />
+              </div>
+              <div className="space-y-1">
                 {[
-                  { n: '1', text: 'Paciente manda mensagem no WhatsApp da clínica' },
-                  { n: '2', text: 'Maria responde, conversa e marca a consulta' },
-                  { n: '3', text: 'Agendamento aparece aqui em tempo real' },
-                ].map(({ n, text }) => (
-                  <div key={n} className="flex gap-3 items-start">
-                    <span className="w-5 h-5 rounded-full bg-zinc-100 text-zinc-500 text-[10px] font-bold flex items-center justify-center flex-shrink-0 mt-0.5">{n}</span>
-                    <p className="text-xs text-zinc-600 leading-relaxed">{text}</p>
-                  </div>
+                  { label: 'Ver agenda completa', page: 'Agenda', icon: Calendar },
+                  { label: 'Gerenciar pacientes', page: 'Clientes', icon: Users },
+                  { label: 'Histórico de conversas', page: 'Conversas', icon: MessageCircle },
+                  { label: 'Relatórios & Análises', page: 'Relatorios', icon: TrendingUp },
+                ].map(({ label, page, icon: Icon }) => (
+                  <Link
+                    key={page}
+                    to={createPageUrl(page)}
+                    className={cn(
+                      "flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-medium transition-all",
+                      dark ? "text-white/40 hover:text-white/70 hover:bg-white/5" : "text-zinc-500 hover:text-zinc-900 hover:bg-zinc-50"
+                    )}
+                  >
+                    <Icon className="w-3.5 h-3.5" />
+                    {label}
+                    <ArrowRight className={cn("w-3 h-3 ml-auto", dark ? "text-white/15" : "text-zinc-300")} />
+                  </Link>
                 ))}
               </div>
-            </div>
-
-            {/* Quick links */}
-            <div className="bg-white rounded-2xl border border-zinc-100 divide-y divide-zinc-100">
-              {[
-                { label: 'Ver agenda completa', page: 'Agenda' },
-                { label: 'Gerenciar pacientes', page: 'Clientes' },
-                { label: 'Histórico de conversas', page: 'Conversas' },
-              ].map(({ label, page }) => (
-                <Link
-                  key={page}
-                  to={createPageUrl(page)}
-                  className="flex items-center justify-between px-4 py-3 text-xs font-medium text-zinc-600 hover:text-zinc-900 hover:bg-zinc-50 transition-colors first:rounded-t-2xl last:rounded-b-2xl"
-                >
-                  {label}
-                  <ArrowRight className="w-3.5 h-3.5 text-zinc-300" />
-                </Link>
-              ))}
             </div>
 
           </div>

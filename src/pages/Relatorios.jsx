@@ -1,45 +1,74 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { base44 } from '@/api/base44Client';
 import { useQuery } from '@tanstack/react-query';
-import { format, subDays, isWithinInterval, startOfDay, endOfDay, isToday, subMonths } from 'date-fns';
+import { format, subDays, isWithinInterval, startOfDay, endOfDay } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
-import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, PieChart, Pie, Cell, LineChart, Line, CartesianGrid } from 'recharts';
-import { TrendingUp, Users, Calendar, MessageCircle, CheckCircle2, XCircle, Clock } from 'lucide-react';
+import {
+  AreaChart, Area, BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer,
+  PieChart, Pie, Cell, CartesianGrid, LineChart, Line
+} from 'recharts';
+import { TrendingUp, Users, Calendar, MessageCircle, CheckCircle2, XCircle, Clock, Activity } from 'lucide-react';
 import { cn } from "@/lib/utils";
+import { useTheme } from '../Layout';
 
-const COLORS = ['#18181b', '#3f3f46', '#71717a', '#a1a1aa', '#d4d4d8'];
+const STATUS_COLORS = {
+  Confirmados: '#8b5cf6',
+  Cancelados:  '#f43f5e',
+  Pendentes:   '#f59e0b',
+  Outros:      '#64748b',
+};
 
 const filters = [
-  { label: '7 dias', days: 7 },
-  { label: '30 dias', days: 30 },
-  { label: '3 meses', days: 90 },
+  { label: '7d',    days: 7 },
+  { label: '30d',   days: 30 },
+  { label: '90d',   days: 90 },
 ];
 
-function MetricCard({ label, value, icon: Icon, sub, color = 'zinc' }) {
+function MetricCard({ label, value, icon: Icon, sub, accent = 'violet', dark }) {
+  const accents = {
+    violet:  { grad: 'from-violet-500 to-indigo-500', glow: 'shadow-violet-500/20' },
+    emerald: { grad: 'from-emerald-400 to-teal-500',  glow: 'shadow-emerald-500/20' },
+    rose:    { grad: 'from-rose-400 to-pink-500',     glow: 'shadow-rose-500/20' },
+    amber:   { grad: 'from-amber-400 to-orange-500',  glow: 'shadow-amber-500/20' },
+    blue:    { grad: 'from-blue-400 to-cyan-500',     glow: 'shadow-blue-500/20' },
+  };
+  const a = accents[accent] || accents.violet;
   return (
-    <div className="bg-white rounded-2xl border border-zinc-100 p-5 flex items-center gap-4">
-      <div className={cn(
-        "w-11 h-11 rounded-xl flex items-center justify-center flex-shrink-0",
-        color === 'emerald' ? 'bg-emerald-500' : color === 'amber' ? 'bg-amber-400' : color === 'rose' ? 'bg-rose-500' : 'bg-zinc-900'
-      )}>
-        <Icon className="w-5 h-5 text-white" />
+    <div className={cn(
+      "rounded-2xl p-5 border transition-all hover:scale-[1.01]",
+      dark ? "bg-[#13131C] border-white/5" : "bg-white border-zinc-100 hover:shadow-md"
+    )}>
+      <div className={cn("w-9 h-9 rounded-xl bg-gradient-to-br flex items-center justify-center shadow-lg mb-4", a.grad, a.glow)}>
+        <Icon className="w-4 h-4 text-white" />
       </div>
-      <div>
-        <p className="text-2xl font-bold text-zinc-900 leading-none">{value}</p>
-        <p className="text-xs text-zinc-400 mt-1 font-medium">{label}</p>
-        {sub && <p className="text-[10px] text-zinc-400 mt-0.5">{sub}</p>}
-      </div>
+      <p className={cn("text-2xl font-bold tracking-tight", dark ? "text-white" : "text-zinc-900")}>{value}</p>
+      <p className={cn("text-[11px] font-medium mt-1", dark ? "text-white/35" : "text-zinc-400")}>{label}</p>
+      {sub && <p className={cn("text-[10px] mt-0.5", dark ? "text-white/20" : "text-zinc-300")}>{sub}</p>}
     </div>
   );
 }
 
-const CustomTooltip = ({ active, payload, label }) => {
+function ChartCard({ title, children, dark }) {
+  return (
+    <div className={cn(
+      "rounded-2xl p-6 border",
+      dark ? "bg-[#13131C] border-white/5" : "bg-white border-zinc-100"
+    )}>
+      <h2 className={cn("text-xs font-bold uppercase tracking-[0.12em] mb-5", dark ? "text-white/30" : "text-zinc-400")}>
+        {title}
+      </h2>
+      {children}
+    </div>
+  );
+}
+
+const CustomTooltip = ({ active, payload, label, dark }) => {
   if (active && payload?.length) {
     return (
-      <div className="bg-zinc-900 text-white text-xs px-3 py-2 rounded-lg shadow-xl">
-        <p className="font-semibold mb-1">{label}</p>
+      <div className={cn("text-xs px-3 py-2 rounded-xl shadow-2xl border", dark ? "bg-[#1a1a2e] border-white/10 text-white" : "bg-white border-zinc-100 text-zinc-900")}>
+        <p className="font-semibold mb-1 opacity-60">{label}</p>
         {payload.map((p, i) => (
-          <p key={i} style={{ color: p.color }}>{p.name}: {p.value}</p>
+          <p key={i} style={{ color: p.color }} className="font-medium">{p.name}: <span className="font-bold">{p.value}</span></p>
         ))}
       </div>
     );
@@ -48,25 +77,24 @@ const CustomTooltip = ({ active, payload, label }) => {
 };
 
 export default function Relatorios() {
+  const { dark } = useTheme();
   const [selectedDays, setSelectedDays] = useState(30);
 
   const { data: agendamentos = [] } = useQuery({
     queryKey: ['agendamentos'],
     queryFn: () => base44.entities.Agendamento.list('-data_hora_inicio', 500),
   });
-
   const { data: conversas = [] } = useQuery({
     queryKey: ['whatsapp-conversations'],
     queryFn: () => base44.agents.listConversations({ agent_name: 'dra_maria' }),
   });
-
   const { data: clientes = [] } = useQuery({
     queryKey: ['clientes'],
     queryFn: () => base44.entities.Cliente.list('-created_date', 500),
   });
 
   const rangeStart = startOfDay(subDays(new Date(), selectedDays));
-  const rangeEnd = endOfDay(new Date());
+  const rangeEnd   = endOfDay(new Date());
 
   const agNoRange = agendamentos.filter(ag => {
     if (!ag.data_hora_inicio) return false;
@@ -78,7 +106,7 @@ export default function Relatorios() {
   const pendentes   = agNoRange.filter(a => a.status === 'pendente').length;
   const taxaConversao = agNoRange.length > 0 ? Math.round((confirmados / agNoRange.length) * 100) : 0;
 
-  // Agendamentos por dia (últimos N dias)
+  // Area chart - agendamentos por dia
   const byDay = {};
   for (let i = selectedDays - 1; i >= 0; i--) {
     const d = format(subDays(new Date(), i), 'dd/MM');
@@ -90,23 +118,20 @@ export default function Relatorios() {
   });
   const byDayData = Object.entries(byDay).map(([date, count]) => ({ date, count }));
 
-  // Status breakdown
   const statusData = [
     { name: 'Confirmados', value: confirmados },
-    { name: 'Cancelados', value: cancelados },
-    { name: 'Pendentes', value: pendentes },
-    { name: 'Outros', value: agNoRange.length - confirmados - cancelados - pendentes },
+    { name: 'Cancelados',  value: cancelados },
+    { name: 'Pendentes',   value: pendentes },
+    { name: 'Outros',      value: Math.max(0, agNoRange.length - confirmados - cancelados - pendentes) },
   ].filter(d => d.value > 0);
 
-  // Tipo breakdown
   const tipoMap = {};
   agNoRange.forEach(ag => {
     const t = ag.tipo || 'outro';
     tipoMap[t] = (tipoMap[t] || 0) + 1;
   });
   const tipoData = Object.entries(tipoMap).map(([name, value]) => ({
-    name: name.charAt(0).toUpperCase() + name.slice(1),
-    value
+    name: name.charAt(0).toUpperCase() + name.slice(1), value
   }));
 
   const convsNoRange = conversas.filter(c => {
@@ -114,24 +139,32 @@ export default function Relatorios() {
     return isWithinInterval(new Date(c.updated_date), { start: rangeStart, end: rangeEnd });
   });
 
+  const gridColor   = dark ? 'rgba(255,255,255,0.04)' : '#f4f4f5';
+  const tickColor   = dark ? 'rgba(255,255,255,0.25)' : '#a1a1aa';
+  const barFill     = dark ? '#7c3aed' : '#8b5cf6';
+  const areaStroke  = dark ? '#7c3aed' : '#8b5cf6';
+  const areaFillId  = dark ? 'areaDark' : 'areaLight';
+
   return (
-    <div className="min-h-screen bg-[#F7F8FA]">
-      <div className="max-w-6xl mx-auto px-6 py-8 space-y-8">
+    <div className={cn("min-h-screen px-4 py-8 md:px-8", dark ? "bg-[#0A0A0F]" : "bg-[#F5F6FA]")}>
+      <div className="max-w-6xl mx-auto space-y-8">
 
         {/* Header */}
-        <div className="flex items-center justify-between">
+        <div className="flex items-start justify-between">
           <div>
-            <p className="text-xs font-semibold text-zinc-400 uppercase tracking-widest mb-1">Análise</p>
-            <h1 className="text-2xl font-bold text-zinc-900 tracking-tight">Relatórios</h1>
+            <p className={cn("text-xs font-semibold uppercase tracking-[0.15em] mb-1.5", dark ? "text-violet-400" : "text-violet-500")}>Análise</p>
+            <h1 className={cn("text-3xl font-bold tracking-tight", dark ? "text-white" : "text-zinc-900")}>Relatórios</h1>
           </div>
-          <div className="flex bg-white border border-zinc-200 rounded-lg p-0.5 gap-0.5">
+          <div className={cn("flex p-0.5 rounded-xl border gap-0.5", dark ? "bg-white/5 border-white/5" : "bg-white border-zinc-200")}>
             {filters.map(f => (
               <button
                 key={f.days}
                 onClick={() => setSelectedDays(f.days)}
                 className={cn(
-                  "px-3 py-1.5 text-xs font-medium rounded-md transition-all",
-                  selectedDays === f.days ? "bg-zinc-900 text-white" : "text-zinc-400 hover:text-zinc-700"
+                  "px-4 py-1.5 text-xs font-bold rounded-lg transition-all",
+                  selectedDays === f.days
+                    ? "bg-gradient-to-r from-violet-600 to-indigo-600 text-white shadow-md shadow-violet-500/20"
+                    : dark ? "text-white/30 hover:text-white/60" : "text-zinc-400 hover:text-zinc-700"
                 )}
               >
                 {f.label}
@@ -140,94 +173,101 @@ export default function Relatorios() {
           </div>
         </div>
 
-        {/* Metrics */}
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
-          <MetricCard label="Agendamentos" value={agNoRange.length} icon={Calendar} color="zinc" />
-          <MetricCard label="Confirmados" value={confirmados} icon={CheckCircle2} color="emerald" />
-          <MetricCard label="Cancelados" value={cancelados} icon={XCircle} color="rose" />
-          <MetricCard label="Taxa de conversão" value={`${taxaConversao}%`} icon={TrendingUp} color="amber" />
+        {/* Metrics row 1 */}
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+          <MetricCard label="Agendamentos" value={agNoRange.length} icon={Calendar} accent="violet" dark={dark} />
+          <MetricCard label="Confirmados"  value={confirmados}      icon={CheckCircle2} accent="emerald" dark={dark} />
+          <MetricCard label="Cancelados"   value={cancelados}       icon={XCircle}      accent="rose"    dark={dark} />
+          <MetricCard label="Taxa conversão" value={`${taxaConversao}%`} icon={TrendingUp} accent="amber" dark={dark} />
+        </div>
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+          <MetricCard label="Conversas WhatsApp" value={convsNoRange.length} icon={MessageCircle} accent="blue" dark={dark} />
+          <MetricCard label="Pacientes total"    value={clientes.length}      icon={Users}          accent="violet" dark={dark} />
+          <MetricCard label="Pendentes"          value={pendentes}            icon={Clock}           accent="amber"  dark={dark} />
+          <MetricCard label="Total histórico"    value={agendamentos.length}  icon={Activity}        accent="blue" sub="todos os registros" dark={dark} />
         </div>
 
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
-          <MetricCard label="Conversas no WhatsApp" value={convsNoRange.length} icon={MessageCircle} color="zinc" />
-          <MetricCard label="Total de pacientes" value={clientes.length} icon={Users} color="zinc" />
-          <MetricCard label="Pendentes" value={pendentes} icon={Clock} color="amber" />
-          <MetricCard label="Total na agenda" value={agendamentos.length} icon={Calendar} color="zinc" sub="histórico completo" />
-        </div>
-
-        {/* Charts */}
+        {/* Charts row 1 */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
 
-          {/* Linha - Agendamentos por dia */}
-          <div className="lg:col-span-2 bg-white rounded-2xl border border-zinc-100 p-6">
-            <h2 className="text-sm font-semibold text-zinc-900 mb-6">Agendamentos por dia</h2>
-            <ResponsiveContainer width="100%" height={220}>
-              <BarChart data={byDayData} barSize={selectedDays <= 7 ? 24 : selectedDays <= 30 ? 12 : 6}>
-                <CartesianGrid strokeDasharray="3 3" stroke="#f4f4f5" vertical={false} />
-                <XAxis
-                  dataKey="date"
-                  tick={{ fontSize: 10, fill: '#a1a1aa' }}
-                  tickLine={false}
-                  axisLine={false}
-                  interval={selectedDays <= 7 ? 0 : selectedDays <= 30 ? 3 : 6}
-                />
-                <YAxis tick={{ fontSize: 10, fill: '#a1a1aa' }} tickLine={false} axisLine={false} />
-                <Tooltip content={<CustomTooltip />} />
-                <Bar dataKey="count" name="Agendamentos" fill="#18181b" radius={[4, 4, 0, 0]} />
-              </BarChart>
-            </ResponsiveContainer>
+          {/* Area chart */}
+          <div className="lg:col-span-2">
+            <ChartCard title="Volume de agendamentos" dark={dark}>
+              <ResponsiveContainer width="100%" height={240}>
+                <AreaChart data={byDayData}>
+                  <defs>
+                    <linearGradient id="areaDark" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="0%"   stopColor="#7c3aed" stopOpacity={0.4} />
+                      <stop offset="100%" stopColor="#7c3aed" stopOpacity={0} />
+                    </linearGradient>
+                    <linearGradient id="areaLight" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="0%"   stopColor="#8b5cf6" stopOpacity={0.15} />
+                      <stop offset="100%" stopColor="#8b5cf6" stopOpacity={0} />
+                    </linearGradient>
+                  </defs>
+                  <CartesianGrid strokeDasharray="3 3" stroke={gridColor} vertical={false} />
+                  <XAxis
+                    dataKey="date"
+                    tick={{ fontSize: 10, fill: tickColor }}
+                    tickLine={false} axisLine={false}
+                    interval={selectedDays <= 7 ? 0 : selectedDays <= 30 ? 3 : 6}
+                  />
+                  <YAxis tick={{ fontSize: 10, fill: tickColor }} tickLine={false} axisLine={false} />
+                  <Tooltip content={<CustomTooltip dark={dark} />} />
+                  <Area type="monotone" dataKey="count" name="Agendamentos" stroke={areaStroke} strokeWidth={2.5} fill={`url(#${areaFillId})`} dot={false} activeDot={{ r: 4, strokeWidth: 0 }} />
+                </AreaChart>
+              </ResponsiveContainer>
+            </ChartCard>
           </div>
 
-          {/* Pie - Status */}
-          <div className="bg-white rounded-2xl border border-zinc-100 p-6">
-            <h2 className="text-sm font-semibold text-zinc-900 mb-6">Status dos agendamentos</h2>
+          {/* Donut chart */}
+          <ChartCard title="Status" dark={dark}>
             {statusData.length > 0 ? (
               <>
                 <ResponsiveContainer width="100%" height={160}>
                   <PieChart>
-                    <Pie data={statusData} cx="50%" cy="50%" innerRadius={45} outerRadius={70} dataKey="value" paddingAngle={3}>
-                      {statusData.map((_, i) => (
-                        <Cell key={i} fill={COLORS[i % COLORS.length]} />
+                    <Pie data={statusData} cx="50%" cy="50%" innerRadius={50} outerRadius={72} dataKey="value" paddingAngle={3}>
+                      {statusData.map((d, i) => (
+                        <Cell key={i} fill={STATUS_COLORS[d.name] || '#64748b'} strokeWidth={0} />
                       ))}
                     </Pie>
-                    <Tooltip content={<CustomTooltip />} />
+                    <Tooltip content={<CustomTooltip dark={dark} />} />
                   </PieChart>
                 </ResponsiveContainer>
-                <div className="space-y-2 mt-4">
+                <div className="space-y-2 mt-2">
                   {statusData.map((d, i) => (
                     <div key={i} className="flex items-center justify-between text-xs">
                       <div className="flex items-center gap-2">
-                        <span className="w-2.5 h-2.5 rounded-full" style={{ background: COLORS[i % COLORS.length] }} />
-                        <span className="text-zinc-600">{d.name}</span>
+                        <span className="w-2 h-2 rounded-full flex-shrink-0" style={{ background: STATUS_COLORS[d.name] || '#64748b' }} />
+                        <span className={dark ? "text-white/50" : "text-zinc-500"}>{d.name}</span>
                       </div>
-                      <span className="font-semibold text-zinc-900">{d.value}</span>
+                      <span className={cn("font-bold", dark ? "text-white" : "text-zinc-900")}>{d.value}</span>
                     </div>
                   ))}
                 </div>
               </>
             ) : (
-              <div className="flex items-center justify-center h-40 text-zinc-400 text-sm">Sem dados</div>
+              <div className={cn("flex items-center justify-center h-40 text-sm", dark ? "text-white/20" : "text-zinc-300")}>Sem dados</div>
             )}
-          </div>
+          </ChartCard>
         </div>
 
-        {/* Tipo */}
-        <div className="bg-white rounded-2xl border border-zinc-100 p-6">
-          <h2 className="text-sm font-semibold text-zinc-900 mb-6">Agendamentos por tipo</h2>
+        {/* Tipo chart */}
+        <ChartCard title="Por tipo de atendimento" dark={dark}>
           {tipoData.length > 0 ? (
             <ResponsiveContainer width="100%" height={180}>
-              <BarChart data={tipoData} layout="vertical" barSize={20}>
-                <CartesianGrid strokeDasharray="3 3" stroke="#f4f4f5" horizontal={false} />
-                <XAxis type="number" tick={{ fontSize: 10, fill: '#a1a1aa' }} tickLine={false} axisLine={false} />
-                <YAxis type="category" dataKey="name" tick={{ fontSize: 11, fill: '#52525b' }} tickLine={false} axisLine={false} width={90} />
-                <Tooltip content={<CustomTooltip />} />
-                <Bar dataKey="value" name="Total" fill="#18181b" radius={[0, 4, 4, 0]} />
+              <BarChart data={tipoData} layout="vertical" barSize={22}>
+                <CartesianGrid strokeDasharray="3 3" stroke={gridColor} horizontal={false} />
+                <XAxis type="number" tick={{ fontSize: 10, fill: tickColor }} tickLine={false} axisLine={false} />
+                <YAxis type="category" dataKey="name" tick={{ fontSize: 11, fill: tickColor }} tickLine={false} axisLine={false} width={100} />
+                <Tooltip content={<CustomTooltip dark={dark} />} />
+                <Bar dataKey="value" name="Total" fill={barFill} radius={[0, 6, 6, 0]} />
               </BarChart>
             </ResponsiveContainer>
           ) : (
-            <div className="flex items-center justify-center h-24 text-zinc-400 text-sm">Sem dados neste período</div>
+            <div className={cn("flex items-center justify-center h-24 text-sm", dark ? "text-white/20" : "text-zinc-300")}>Sem dados neste período</div>
           )}
-        </div>
+        </ChartCard>
 
       </div>
     </div>
