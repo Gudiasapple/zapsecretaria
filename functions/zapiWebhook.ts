@@ -3,11 +3,16 @@ import { createClientFromRequest } from 'npm:@base44/sdk@0.8.20';
 const INSTANCE_ID = Deno.env.get("ZAPI_INSTANCE_ID");
 const TOKEN = Deno.env.get("ZAPI_TOKEN");
 
+const CLIENT_TOKEN = Deno.env.get("ZAPI_CLIENT_TOKEN");
+
 async function sendMessage(phone, message) {
   const url = `https://api.z-api.io/instances/${INSTANCE_ID}/token/${TOKEN}/send-text`;
   const response = await fetch(url, {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
+    headers: { 
+      'Content-Type': 'application/json',
+      'Client-Token': CLIENT_TOKEN
+    },
     body: JSON.stringify({ phone, message })
   });
   return response.json();

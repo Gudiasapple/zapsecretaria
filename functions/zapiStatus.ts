@@ -2,6 +2,7 @@ import { createClientFromRequest } from 'npm:@base44/sdk@0.8.20';
 
 const INSTANCE_ID = Deno.env.get("ZAPI_INSTANCE_ID");
 const TOKEN = Deno.env.get("ZAPI_TOKEN");
+const CLIENT_TOKEN = Deno.env.get("ZAPI_CLIENT_TOKEN");
 
 Deno.serve(async (req) => {
   const base44 = createClientFromRequest(req);
