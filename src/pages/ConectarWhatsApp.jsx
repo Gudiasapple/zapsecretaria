@@ -27,6 +27,15 @@ export default function ConectarWhatsApp() {
     setLoading(false);
   }
 
+  async function handleDisconnect() {
+    setDisconnecting(true);
+    await base44.functions.invoke('zapiDisconnect', {});
+    setConnected(false);
+    setQrCode(null);
+    setDisconnecting(false);
+    fetchStatus();
+  }
+
   useEffect(() => {
     fetchStatus();
   }, []);
