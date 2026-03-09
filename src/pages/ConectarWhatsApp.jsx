@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { base44 } from '@/api/base44Client';
-import { Loader2, CheckCircle2, Smartphone, RefreshCw, Wifi, WifiOff } from 'lucide-react';
+import { Loader2, CheckCircle2, Smartphone, RefreshCw, Wifi, WifiOff, LogOut } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
 export default function ConectarWhatsApp() {
@@ -8,7 +8,7 @@ export default function ConectarWhatsApp() {
   const [connected, setConnected] = useState(false);
   const [qrCode, setQrCode] = useState(null);
   const [error, setError] = useState(null);
-  const [polling, setPolling] = useState(false);
+  const [disconnecting, setDisconnecting] = useState(false);
 
   async function fetchStatus() {
     setLoading(true);
