@@ -40,10 +40,18 @@ export default function Clientes() {
   const [showForm, setShowForm] = useState(false);
   const [selectedCliente, setSelectedCliente] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
+  const [userEmail, setUserEmail] = useState(null);
+
+  useEffect(() => {
+    base44.auth.me().then(u => setUserEmail(u?.email));
+  }, []);
 
   const { data: clientes = [], isLoading } = useQuery({
-    queryKey: ['clientes'],
-    queryFn: () => base44.entities.Cliente.list('-created_date'),
+    queryKey: ['clientes', userEmail],
+    queryFn: () => userEmail
+      ? base44.entities.Cliente.filter({ created_by: userEmail }, '-created_date')
+      : [],
+    enabled: !!userEmail,
   });
 
   const createMutation = useMutation({
