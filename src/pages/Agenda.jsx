@@ -291,6 +291,18 @@ export default function Agenda() {
         </div>
       </div>
 
+      {/* Dialog Disparo em Massa */}
+      <DisparoEmMassaDialog
+        open={showDisparo}
+        onOpenChange={setShowDisparo}
+        data={selectedDate}
+        totalAgendamentos={agendamentos.filter(ag => {
+          if (!ag.data_hora_inicio || ag.status === 'cancelado') return false;
+          const agData = new Date(ag.data_hora_inicio);
+          return isSameDay(agData, selectedDate);
+        }).length}
+      />
+
       {/* Dialog for Form */}
       <Dialog open={showForm} onOpenChange={setShowForm}>
         <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
