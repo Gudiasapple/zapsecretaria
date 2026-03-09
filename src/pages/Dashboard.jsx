@@ -39,13 +39,24 @@ export default function Dashboard() {
   const [dateFilter, setDateFilter] = useState('hoje');
   const today = new Date();
 
+  const [userEmail, setUserEmail] = useState(null);
+  useEffect(() => {
+    base44.auth.me().then(u => setUserEmail(u?.email));
+  }, []);
+
   const { data: agendamentos = [] } = useQuery({
-    queryKey: ['agendamentos'],
-    queryFn: () => base44.entities.Agendamento.list('-data_hora_inicio', 100),
+    queryKey: ['agendamentos', userEmail],
+    queryFn: () => userEmail
+      ? base44.entities.Agendamento.filter({ created_by: userEmail }, '-data_hora_inicio', 100)
+      : [],
+    enabled: !!userEmail,
   });
   const { data: clientes = [] } = useQuery({
-    queryKey: ['clientes'],
-    queryFn: () => base44.entities.Cliente.list('-created_date', 100),
+    queryKey: ['clientes', userEmail],
+    queryFn: () => userEmail
+      ? base44.entities.Cliente.filter({ created_by: userEmail }, '-created_date', 100)
+      : [],
+    enabled: !!userEmail,
   });
 
   const updateMutation = useMutation({
