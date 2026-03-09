@@ -71,10 +71,9 @@ export default function Layout({ children, currentPageName }) {
 
         {/* WhatsApp CTA */}
         <div className="px-3 pb-2">
-          <a
-            href={base44.agents.getWhatsAppConnectURL('dra_maria')}
-            target="_blank"
-            rel="noopener noreferrer"
+          <Link
+            to={createPageUrl('ConectarWhatsApp')}
+            onClick={() => setSidebarOpen(false)}
             className="flex items-center gap-3 px-3 py-3 rounded-lg bg-emerald-50 hover:bg-emerald-100 transition-colors group"
           >
             <div className="w-7 h-7 rounded-md bg-emerald-500 flex items-center justify-center flex-shrink-0">
@@ -84,7 +83,7 @@ export default function Layout({ children, currentPageName }) {
               <p className="text-[12px] font-semibold text-emerald-800">Conectar WhatsApp</p>
               <p className="text-[11px] text-emerald-600">Ativar atendimento via IA</p>
             </div>
-          </a>
+          </Link>
         </div>
 
         {/* Logout */}
