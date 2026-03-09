@@ -13,7 +13,7 @@ import {
 } from "@/components/ui/dialog";
 import { 
   Plus, ChevronLeft, ChevronRight, Clock, User, Phone,
-  CheckCircle2, XCircle, AlertCircle
+  CheckCircle2, XCircle, AlertCircle, BellOff
 } from 'lucide-react';
 import { format, addDays, startOfWeek, isSameDay, parseISO, isToday } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
