@@ -25,9 +25,20 @@ Deno.serve(async (req) => {
       return Response.json({ connected: false, error: 'QR Code não disponível', status });
     }
 
-    const imageBuffer = await qrRes.arrayBuffer();
-    const base64 = btoa(String.fromCharCode(...new Uint8Array(imageBuffer)));
-    const qrCodeBase64 = `data:image/png;base64,${base64}`;
+    const contentType = qrRes.headers.get('content-type') || '';
+
+    let qrCodeBase64;
+    if (contentType.includes('application/json')) {
+      // Z-API retorna JSON com campo "value" contendo o base64
+      const json = await qrRes.json();
+      const raw = json.value || json.qrcode || json.qr || '';
+      // Se já tem o prefixo data:image, usa direto; senão monta
+      qrCodeBase64 = raw.startsWith('data:') ? raw : `data:image/png;base64,${raw}`;
+    } else {
+      const imageBuffer = await qrRes.arrayBuffer();
+      const base64 = btoa(String.fromCharCode(...new Uint8Array(imageBuffer)));
+      qrCodeBase64 = `data:image/png;base64,${base64}`;
+    }
 
     return Response.json({ connected: false, qrCode: qrCodeBase64, status });
   } catch (error) {
