@@ -179,7 +179,7 @@ export default function AgendamentoForm({
                 selected={formData.data}
                 onSelect={(date) => setFormData({ ...formData, data: date })}
                 locale={ptBR}
-                disabled={(date) => date < new Date() || date.getDay() === 0}
+                disabled={(date) => { const today = new Date(); today.setHours(0,0,0,0); return date < today || date.getDay() === 0; }}
               />
             </PopoverContent>
           </Popover>

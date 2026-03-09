@@ -223,6 +223,7 @@ export default function Agenda() {
                           )}
                           onClick={() => {
                             setSelectedDate(day);
+                            setSelectedAgendamento({ data: day, hora: time });
                             setShowForm(true);
                           }}
                         >

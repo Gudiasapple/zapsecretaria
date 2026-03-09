@@ -49,22 +49,22 @@
  */
 import Agenda from './pages/Agenda';
 import Clientes from './pages/Clientes';
+import ConectarWhatsApp from './pages/ConectarWhatsApp';
 import Configuracoes from './pages/Configuracoes';
 import Conversas from './pages/Conversas';
 import Dashboard from './pages/Dashboard';
 import Relatorios from './pages/Relatorios';
-import ConectarWhatsApp from './pages/ConectarWhatsApp';
 import __Layout from './Layout.jsx';
 
 
 export const PAGES = {
     "Agenda": Agenda,
     "Clientes": Clientes,
+    "ConectarWhatsApp": ConectarWhatsApp,
     "Configuracoes": Configuracoes,
     "Conversas": Conversas,
     "Dashboard": Dashboard,
     "Relatorios": Relatorios,
-    "ConectarWhatsApp": ConectarWhatsApp,
 }
 
 export const pagesConfig = {
