@@ -5,7 +5,7 @@ import { format, startOfWeek, endOfWeek, isToday } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import { Calendar, Users, Clock, CheckCircle2, MessageCircle, RefreshCw, Bot, TrendingUp, ArrowRight } from 'lucide-react';
 import { cn } from "@/lib/utils";
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
 import AgendaTimeline from '../components/dashboard/AgendaTimeline';
 
