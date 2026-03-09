@@ -51,6 +51,12 @@ export default function AgendamentoForm({
         data: date,
         hora: format(date, 'HH:mm')
       }));
+    } else if (agendamento?.data) {
+      setFormData(prev => ({
+        ...prev,
+        data: agendamento.data,
+        hora: agendamento.hora || '09:00'
+      }));
     }
   }, [agendamento]);
 
