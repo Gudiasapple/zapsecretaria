@@ -35,6 +35,7 @@ const filterNames  = { hoje: 'Hoje', semana: 'Esta semana', todos: 'Todos' };
 
 export default function Dashboard() {
   const queryClient = useQueryClient();
+  const navigate = useNavigate();
   const [dateFilter, setDateFilter] = useState('hoje');
   const today = new Date();
 
