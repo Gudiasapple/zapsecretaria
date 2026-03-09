@@ -296,11 +296,7 @@ export default function Agenda() {
         open={showDisparo}
         onOpenChange={setShowDisparo}
         data={selectedDate}
-        totalAgendamentos={agendamentos.filter(ag => {
-          if (!ag.data_hora_inicio || ag.status === 'cancelado') return false;
-          const agData = new Date(ag.data_hora_inicio);
-          return isSameDay(agData, selectedDate);
-        }).length}
+        agendamentos={agendamentos}
       />
 
       {/* Dialog for Form */}
