@@ -20,6 +20,7 @@ import { ptBR } from 'date-fns/locale';
 import { cn } from "@/lib/utils";
 
 import AgendamentoForm from '../components/forms/AgendamentoForm';
+import DisparoEmMassaDialog from '../components/agenda/DisparoEmMassaDialog';
 
 const statusColors = {
   pendente: "bg-amber-500",
