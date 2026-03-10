@@ -61,14 +61,6 @@ export default function ChatIA() {
     });
     setConversation(conv);
     setMessages(conv.messages || []);
-
-    // Mensagem de boas-vindas da IA
-    const welcomed = await base44.agents.addMessage(conv, {
-      role: 'user',
-      content: 'oi',
-    });
-    setConversation(welcomed);
-    setMessages(welcomed.messages || []);
   };
 
   const handleNewChat = async () => {
