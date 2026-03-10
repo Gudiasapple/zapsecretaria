@@ -13,10 +13,10 @@ import AgendaTimeline from '../components/dashboard/AgendaTimeline';
 
 function KpiCard({ label, value, icon: Icon, accent = 'violet', trend, dark }) {
   const accents = {
-    violet: { grad: 'from-violet-500 to-indigo-500', glow: 'shadow-violet-500/20', badge: dark ? 'text-violet-300 bg-violet-500/10' : 'text-violet-700 bg-violet-50' },
-    emerald: { grad: 'from-emerald-400 to-teal-500', glow: 'shadow-emerald-500/20', badge: dark ? 'text-emerald-300 bg-emerald-500/10' : 'text-emerald-700 bg-emerald-50' },
-    amber: { grad: 'from-amber-400 to-orange-500', glow: 'shadow-amber-500/20', badge: dark ? 'text-amber-300 bg-amber-500/10' : 'text-amber-700 bg-amber-50' },
-    blue: { grad: 'from-blue-400 to-cyan-500', glow: 'shadow-blue-500/20', badge: dark ? 'text-blue-300 bg-blue-500/10' : 'text-blue-700 bg-blue-50' },
+    violet: { grad: 'from-amber-400 via-yellow-300 to-amber-500', glow: 'shadow-amber-400/30', badge: dark ? 'text-amber-300 bg-amber-500/10' : 'text-amber-800 bg-amber-50' },
+    emerald: { grad: 'from-slate-300 via-zinc-100 to-slate-400', glow: 'shadow-zinc-400/20', badge: dark ? 'text-zinc-300 bg-zinc-500/10' : 'text-zinc-700 bg-zinc-50' },
+    amber: { grad: 'from-amber-500 via-yellow-400 to-amber-600', glow: 'shadow-amber-500/25', badge: dark ? 'text-amber-300 bg-amber-500/10' : 'text-amber-800 bg-amber-50' },
+    blue: { grad: 'from-zinc-300 via-slate-200 to-zinc-500', glow: 'shadow-zinc-400/20', badge: dark ? 'text-zinc-300 bg-zinc-500/10' : 'text-zinc-700 bg-zinc-50' },
   };
   const a = accents[accent];
   return (
@@ -138,7 +138,7 @@ export default function Dashboard() {
           </div>
           <button
             onClick={() => navigate(createPageUrl('ConectarWhatsApp'))}
-            className="flex items-center gap-2 px-4 py-2.5 bg-gradient-to-r from-violet-600 to-indigo-600 hover:from-violet-700 hover:to-indigo-700 text-white text-xs font-semibold rounded-xl transition-all shadow-lg shadow-violet-500/25 hover:shadow-violet-500/40"
+            className="flex items-center gap-2 px-4 py-2.5 bg-gradient-to-r from-amber-500 via-yellow-400 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-amber-950 text-xs font-semibold rounded-xl transition-all shadow-lg shadow-amber-500/30"
           >
             <Zap className="w-3.5 h-3.5" />
             Conectar WhatsApp
@@ -168,7 +168,7 @@ export default function Dashboard() {
                     className={cn(
                       "px-3 py-1 text-xs font-semibold rounded-md transition-all",
                       dateFilter === f
-                        ? dark ? "bg-violet-600 text-white" : "bg-violet-600 text-white"
+                        ? "bg-gradient-to-r from-amber-500 to-amber-600 text-amber-950 shadow-sm"
                         : dark ? "text-white/30 hover:text-white/60" : "text-zinc-400 hover:text-zinc-700"
                     )}
                   >
