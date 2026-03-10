@@ -65,7 +65,32 @@ export default function ChatIA() {
     // Mostra mensagem do usuário imediatamente
     setMessages(prev => [...prev, { role: 'user', content: text, id: 'tmp-' + Date.now() }]);
 
-    const updated = await base44.agents.addMessage(conv, { role: 'user', content: text });
+    let currentConv = conv;
+    // Se a conversa expirou, cria uma nova automaticamente
+    if (!currentConv?.id) {
+      const newConv = await base44.agents.createConversation({
+        agent_name: 'dra_maria',
+        metadata: { name: 'Teste via Dashboard' },
+      });
+      conversationRef.current = newConv;
+      setConversation(newConv);
+      currentConv = newConv;
+    }
+
+    let updated;
+    try {
+      updated = await base44.agents.addMessage(currentConv, { role: 'user', content: text });
+    } catch (err) {
+      // Conversa não existe mais — cria nova e tenta de novo
+      const newConv = await base44.agents.createConversation({
+        agent_name: 'dra_maria',
+        metadata: { name: 'Teste via Dashboard' },
+      });
+      conversationRef.current = newConv;
+      setConversation(newConv);
+      updated = await base44.agents.addMessage(newConv, { role: 'user', content: text });
+    }
+
     conversationRef.current = updated;
     setConversation(updated);
     setMessages(updated.messages || []);
