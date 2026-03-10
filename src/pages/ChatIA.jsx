@@ -107,17 +107,6 @@ export default function ChatIA() {
 
       {/* Messages */}
       <div className="flex-1 overflow-y-auto px-4 py-6 space-y-4 min-h-0">
-        {messages.length === 0 && !sending && (
-          <div className="flex gap-3 justify-start">
-            <div className={cn("w-8 h-8 rounded-xl flex items-center justify-center flex-shrink-0 mt-0.5", dark ? "bg-amber-500/15" : "bg-amber-100")}>
-              <Bot className={cn("w-4 h-4", dark ? "text-amber-400" : "text-amber-700")} />
-            </div>
-            <div className={cn("rounded-2xl px-4 py-2.5 border max-w-[75%]", dark ? "bg-[#13131C] border-white/5 text-white/90" : "bg-white border-zinc-100 text-zinc-900")}>
-              <p className="text-sm leading-relaxed">Oi! 😊 Aqui é a Maria, da clínica. Como posso te ajudar hoje?</p>
-            </div>
-          </div>
-        )}
-
         {messages.map((msg, i) => (
           <MessageBubble key={msg.id || i} message={msg} dark={dark} />
         ))}
