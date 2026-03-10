@@ -39,6 +39,7 @@ export default function ChatIA() {
 
   const startNewConversation = () => {
     if (unsubRef.current) unsubRef.current();
+    convRef.current = null;
     setConvId(null);
     setMessages([]);
     setError(null);
