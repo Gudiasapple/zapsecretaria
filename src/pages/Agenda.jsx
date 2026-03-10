@@ -126,62 +126,53 @@ export default function Agenda() {
   const handleNextWeek = () => setSelectedDate(addDays(selectedDate, 7));
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-violet-50 p-6">
+    <div className={cn("min-h-screen px-4 py-8 md:px-8", dark ? "bg-[#0A0A0F]" : "bg-[#F5F6FA]")}>
       <div className="max-w-[1600px] mx-auto space-y-6">
         {/* Header */}
         <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
           <div>
-            <h1 className="text-3xl font-bold text-slate-900 tracking-tight">Agenda</h1>
-            <p className="text-slate-500 mt-1">
+            <p className={cn("text-xs font-semibold uppercase tracking-[0.15em] mb-1.5", dark ? "text-violet-400" : "text-violet-500")}>Agenda</p>
+            <h1 className={cn("text-3xl font-bold tracking-tight", dark ? "text-white" : "text-zinc-900")}>
               {format(weekStart, "'Semana de' d 'de' MMMM", { locale: ptBR })}
-            </p>
+            </h1>
           </div>
           
-          <div className="flex gap-3">
-            <div className="flex items-center bg-white rounded-lg shadow-sm border">
-              <Button variant="ghost" size="icon" onClick={handlePrevWeek}>
+          <div className="flex gap-2">
+            <div className={cn("flex items-center rounded-xl border", dark ? "bg-white/5 border-white/5" : "bg-white border-zinc-200")}>
+              <button onClick={handlePrevWeek} className={cn("w-9 h-9 flex items-center justify-center rounded-l-xl transition-colors", dark ? "text-white/30 hover:text-white/60 hover:bg-white/5" : "text-zinc-400 hover:text-zinc-700 hover:bg-zinc-50")}>
                 <ChevronLeft className="w-4 h-4" />
-              </Button>
-              <Button 
-                variant="ghost" 
-                size="sm" 
-                onClick={() => setSelectedDate(new Date())}
-                className="px-4"
-              >
+              </button>
+              <button onClick={() => setSelectedDate(new Date())} className={cn("px-3 text-xs font-semibold transition-colors", dark ? "text-white/40 hover:text-white/70" : "text-zinc-500 hover:text-zinc-800")}>
                 Hoje
-              </Button>
-              <Button variant="ghost" size="icon" onClick={handleNextWeek}>
+              </button>
+              <button onClick={handleNextWeek} className={cn("w-9 h-9 flex items-center justify-center rounded-r-xl transition-colors", dark ? "text-white/30 hover:text-white/60 hover:bg-white/5" : "text-zinc-400 hover:text-zinc-700 hover:bg-zinc-50")}>
                 <ChevronRight className="w-4 h-4" />
-              </Button>
+              </button>
             </div>
-            <Button
-              variant="outline"
+            <button
               onClick={() => setShowDisparo(true)}
-              className="border-amber-300 text-amber-700 hover:bg-amber-50"
+              className={cn("flex items-center gap-2 px-3 py-2 rounded-xl border text-xs font-semibold transition-all", dark ? "bg-amber-500/10 border-amber-500/20 text-amber-300 hover:bg-amber-500/15" : "bg-amber-50 border-amber-200 text-amber-700 hover:bg-amber-100")}
             >
-              <BellOff className="w-4 h-4 mr-2" />
+              <BellOff className="w-3.5 h-3.5" />
               Cancelar dia
-            </Button>
-            <Button 
-              onClick={() => {
-                setSelectedAgendamento(null);
-                setShowForm(true);
-              }}
-              className="bg-gradient-to-r from-violet-600 to-purple-600 hover:from-violet-700 hover:to-purple-700"
+            </button>
+            <button
+              onClick={() => { setSelectedAgendamento(null); setShowForm(true); }}
+              className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-violet-600 to-indigo-600 hover:from-violet-700 hover:to-indigo-700 text-white text-xs font-semibold rounded-xl transition-all shadow-lg shadow-violet-500/25"
             >
-              <Plus className="w-4 h-4 mr-2" />
+              <Plus className="w-4 h-4" />
               Novo
-            </Button>
+            </button>
           </div>
         </div>
 
         {/* Calendar Grid */}
-        <Card className="border-0 shadow-sm overflow-hidden">
+        <div className={cn("rounded-2xl border overflow-hidden", dark ? "bg-[#13131C] border-white/5" : "bg-white border-zinc-100")}>
           <div className="overflow-x-auto">
             <div className="min-w-[900px]">
               {/* Header with days */}
-              <div className="grid grid-cols-8 border-b bg-slate-50">
-                <div className="p-3 text-center text-sm font-medium text-slate-500 border-r">
+              <div className={cn("grid grid-cols-8 border-b", dark ? "bg-white/[0.02] border-white/5" : "bg-zinc-50 border-zinc-100")}>
+                <div className={cn("p-3 text-center text-xs font-bold uppercase tracking-widest border-r", dark ? "text-white/20 border-white/5" : "text-zinc-400 border-zinc-100")}>
                   Horário
                 </div>
                 {weekDays.map((day, i) => (
@@ -189,15 +180,16 @@ export default function Agenda() {
                     key={i} 
                     className={cn(
                       "p-3 text-center border-r last:border-r-0",
-                      isToday(day) && "bg-violet-50"
+                      dark ? "border-white/5" : "border-zinc-100",
+                      isToday(day) && (dark ? "bg-violet-500/10" : "bg-violet-50")
                     )}
                   >
-                    <p className="text-xs text-slate-500 uppercase">
+                    <p className={cn("text-[10px] font-bold uppercase tracking-widest", dark ? "text-white/25" : "text-zinc-400")}>
                       {format(day, 'EEE', { locale: ptBR })}
                     </p>
                     <p className={cn(
-                      "text-lg font-semibold mt-1",
-                      isToday(day) ? "text-violet-600" : "text-slate-900"
+                      "text-xl font-bold mt-1",
+                      isToday(day) ? "text-violet-500" : dark ? "text-white/70" : "text-zinc-800"
                     )}>
                       {format(day, 'd')}
                     </p>
@@ -206,10 +198,10 @@ export default function Agenda() {
               </div>
 
               {/* Time slots */}
-              <div className="divide-y">
+              <div className={cn("divide-y", dark ? "divide-white/[0.03]" : "divide-zinc-50")}>
                 {timeSlots.map((time) => (
-                  <div key={time} className="grid grid-cols-8 divide-x">
-                    <div className="p-2 text-center text-sm text-slate-500 bg-slate-50/50">
+                  <div key={time} className={cn("grid grid-cols-8 divide-x", dark ? "divide-white/[0.03]" : "divide-zinc-100")}>
+                    <div className={cn("p-2 text-center text-xs font-semibold tabular-nums", dark ? "text-white/15 bg-white/[0.01]" : "text-zinc-400 bg-zinc-50/50")}>
                       {time}
                     </div>
                     {weekDays.map((day, dayIndex) => {
@@ -218,8 +210,9 @@ export default function Agenda() {
                         <div 
                           key={dayIndex} 
                           className={cn(
-                            "p-1 min-h-[60px] hover:bg-slate-50 transition-colors cursor-pointer",
-                            isToday(day) && "bg-violet-50/30"
+                            "p-1 min-h-[60px] transition-colors cursor-pointer",
+                            dark ? "hover:bg-white/[0.02]" : "hover:bg-zinc-50",
+                            isToday(day) && (dark ? "bg-violet-500/[0.04]" : "bg-violet-50/20")
                           )}
                           onClick={() => {
                             setSelectedDate(day);
@@ -236,18 +229,16 @@ export default function Agenda() {
                                 setShowForm(true);
                               }}
                               className={cn(
-                                "p-2 rounded-lg text-xs mb-1 border-l-4 bg-white shadow-sm hover:shadow-md transition-all cursor-pointer",
-                                tipoColors[ag.tipo] || "border-l-slate-400"
+                                "p-2 rounded-lg text-xs mb-1 border-l-4 shadow-sm hover:shadow-md transition-all cursor-pointer",
+                                tipoColors[ag.tipo] || "border-l-zinc-400",
+                                dark ? "bg-white/5 hover:bg-white/8" : "bg-white hover:shadow-md"
                               )}
                             >
-                              <div className="flex items-center justify-between mb-1">
-                                <span className="font-medium truncate">{ag.cliente_nome}</span>
-                                <div className={cn(
-                                  "w-2 h-2 rounded-full",
-                                  statusColors[ag.status]
-                                )} />
+                              <div className="flex items-center justify-between mb-0.5">
+                                <span className={cn("font-semibold truncate", dark ? "text-white/80" : "text-zinc-800")}>{ag.cliente_nome}</span>
+                                <div className={cn("w-1.5 h-1.5 rounded-full flex-shrink-0", statusColors[ag.status])} />
                               </div>
-                              <p className="text-slate-500 truncate">{ag.tipo}</p>
+                              <p className={cn("truncate text-[10px]", dark ? "text-white/25" : "text-zinc-400")}>{ag.tipo}</p>
                             </div>
                           ))}
                         </div>
@@ -258,26 +249,21 @@ export default function Agenda() {
               </div>
             </div>
           </div>
-        </Card>
+        </div>
 
         {/* Legend */}
-        <div className="flex flex-wrap gap-4 justify-center">
-          <div className="flex items-center gap-2 text-sm text-slate-600">
-            <div className="w-3 h-3 rounded-full bg-amber-500" />
-            Pendente
-          </div>
-          <div className="flex items-center gap-2 text-sm text-slate-600">
-            <div className="w-3 h-3 rounded-full bg-emerald-500" />
-            Confirmado
-          </div>
-          <div className="flex items-center gap-2 text-sm text-slate-600">
-            <div className="w-3 h-3 rounded-full bg-rose-500" />
-            Cancelado
-          </div>
-          <div className="flex items-center gap-2 text-sm text-slate-600">
-            <div className="w-3 h-3 rounded-full bg-slate-500" />
-            Concluído
-          </div>
+        <div className="flex flex-wrap gap-5 justify-center">
+          {[
+            { color: 'bg-amber-400',  label: 'Pendente' },
+            { color: 'bg-emerald-400', label: 'Confirmado' },
+            { color: 'bg-rose-400',   label: 'Cancelado' },
+            { color: 'bg-zinc-400',   label: 'Concluído' },
+          ].map(({ color, label }) => (
+            <div key={label} className={cn("flex items-center gap-2 text-xs font-medium", dark ? "text-white/25" : "text-zinc-400")}>
+              <div className={cn("w-2 h-2 rounded-full", color)} />
+              {label}
+            </div>
+          ))}
         </div>
       </div>
 
