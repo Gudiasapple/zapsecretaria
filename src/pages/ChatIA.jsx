@@ -31,12 +31,14 @@ export default function ChatIA() {
     let unsub;
     try {
       unsub = base44.agents.subscribeToConversation(conversation.id, (data) => {
-        if (active) setMessages(data.messages || []);
+        if (!active) return;
+        if (data?.error || !data) return;
+        setMessages(data.messages || []);
       });
     } catch (_) {}
     return () => {
       active = false;
-      unsub?.();
+      try { unsub?.(); } catch (_) {}
     };
   }, [conversation?.id]);
 
