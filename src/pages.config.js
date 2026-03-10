@@ -54,6 +54,7 @@ import Configuracoes from './pages/Configuracoes';
 import Conversas from './pages/Conversas';
 import Dashboard from './pages/Dashboard';
 import Relatorios from './pages/Relatorios';
+import ChatIA from './pages/ChatIA';
 import __Layout from './Layout.jsx';
 
 
@@ -65,6 +66,7 @@ export const PAGES = {
     "Conversas": Conversas,
     "Dashboard": Dashboard,
     "Relatorios": Relatorios,
+    "ChatIA": ChatIA,
 }
 
 export const pagesConfig = {

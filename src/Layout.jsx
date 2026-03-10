@@ -18,6 +18,7 @@ const navigation = [
   { name: 'Pacientes', icon: Users, page: 'Clientes' },
   { name: 'Conversas', icon: MessageCircle, page: 'Conversas' },
   { name: 'Relatórios', icon: TrendingUp, page: 'Relatorios' },
+  { name: 'Falar com IA', icon: Bot, page: 'ChatIA' },
   { name: 'Configurações', icon: Settings, page: 'Configuracoes' },
 ];
 
