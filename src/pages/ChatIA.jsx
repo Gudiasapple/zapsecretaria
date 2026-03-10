@@ -61,7 +61,10 @@ export default function ChatIA() {
         agent_name: 'dra_maria',
         metadata: { name: 'Chat de teste' },
       });
-      currentConvId = conv.id;
+      console.log('createConversation retornou:', JSON.stringify(conv));
+      // Tenta pegar o id de diferentes formatos possíveis
+      currentConvId = conv?.id || conv?.conversation_id || conv?._id || conv;
+      console.log('convId extraído:', currentConvId);
       setConvId(currentConvId);
     }
 
