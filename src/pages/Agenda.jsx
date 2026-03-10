@@ -1,24 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { base44 } from '@/api/base44Client';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Calendar } from "@/components/ui/calendar";
-import { Badge } from "@/components/ui/badge";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
-import { 
-  Plus, ChevronLeft, ChevronRight, Clock, User, Phone,
-  CheckCircle2, XCircle, AlertCircle, BellOff
-} from 'lucide-react';
-import { format, addDays, startOfWeek, isSameDay, parseISO, isToday } from 'date-fns';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Plus, ChevronLeft, ChevronRight, BellOff } from 'lucide-react';
+import { format, addDays, startOfWeek, isSameDay, isToday } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import { cn } from "@/lib/utils";
-
+import { useTheme } from '../Layout';
 import AgendamentoForm from '../components/forms/AgendamentoForm';
 import DisparoEmMassaDialog from '../components/agenda/DisparoEmMassaDialog';
 
