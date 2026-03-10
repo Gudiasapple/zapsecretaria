@@ -174,7 +174,7 @@ export default function Configuracoes() {
         </div>
 
         <Tabs defaultValue="clinica" className="space-y-5">
-          <div className={cn("rounded-xl border p-1 flex flex-wrap gap-0.5", dark ? "bg-[#13131C] border-white/5" : "bg-white border-zinc-100")}>
+          <TabsList className={cn("h-auto rounded-xl border p-1 flex flex-wrap gap-0.5 w-full justify-start", dark ? "bg-[#13131C] border-white/5" : "bg-white border-zinc-100")}>
             {[
               { value: 'clinica',    label: 'Clínica',    icon: Building2 },
               { value: 'horarios',   label: 'Horários',   icon: Clock },
@@ -186,7 +186,7 @@ export default function Configuracoes() {
                 <Icon className="w-3.5 h-3.5" /> {label}
               </TabsTrigger>
             ))}
-          </div>
+          </TabsList>
 
           <TabsContent value="clinica">
             <SectionCard title="Informações da Clínica" description="Dados básicos utilizados pela IA" dark={dark}>
