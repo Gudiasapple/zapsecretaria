@@ -27,13 +27,22 @@ export default function ChatIA() {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
 
-  // Subscribe em tempo real
+  // Subscribe em tempo real — só enquanto não está enviando para evitar conflito
   useEffect(() => {
     if (!conversation?.id) return;
-    const unsub = base44.agents.subscribeToConversation(conversation.id, (data) => {
-      setMessages(data.messages || []);
-    });
-    return unsub;
+    let active = true;
+    let unsub;
+    try {
+      unsub = base44.agents.subscribeToConversation(conversation.id, (data) => {
+        if (active) setMessages(data.messages || []);
+      });
+    } catch (_) {
+      // Conversa inválida, ignora
+    }
+    return () => {
+      active = false;
+      unsub?.();
+    };
   }, [conversation?.id]);
 
   const createNewConversation = async () => {
