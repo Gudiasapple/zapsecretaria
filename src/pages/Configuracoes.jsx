@@ -160,13 +160,13 @@ export default function Configuracoes() {
         {/* Header */}
         <div className="flex items-start justify-between">
           <div>
-            <p className={cn("text-xs font-semibold uppercase tracking-[0.15em] mb-1.5", dark ? "text-violet-400" : "text-violet-500")}>Sistema</p>
+            <p className={cn("text-xs font-semibold uppercase tracking-[0.15em] mb-1.5", dark ? "text-amber-400" : "text-amber-600")}>Sistema</p>
             <h1 className={cn("text-3xl font-bold tracking-tight", dark ? "text-white" : "text-zinc-900")}>Configurações</h1>
           </div>
           <button
             onClick={() => saveMutation.mutate(formData)}
             disabled={saveMutation.isPending}
-            className="flex items-center gap-2 px-4 py-2.5 bg-gradient-to-r from-violet-600 to-indigo-600 hover:from-violet-700 hover:to-indigo-700 disabled:opacity-50 text-white text-xs font-semibold rounded-xl transition-all shadow-lg shadow-violet-500/25"
+            className="flex items-center gap-2 px-4 py-2.5 bg-gradient-to-r from-amber-500 via-yellow-400 to-amber-600 hover:from-amber-600 hover:to-amber-700 disabled:opacity-50 text-amber-950 text-xs font-semibold rounded-xl transition-all shadow-lg shadow-amber-400/30"
           >
             {saveMutation.isPending ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Save className="w-3.5 h-3.5" />}
             Salvar
@@ -182,7 +182,7 @@ export default function Configuracoes() {
               { value: 'convenios',  label: 'Convênios',  icon: CreditCard },
               { value: 'emergencia', label: 'Emergência', icon: AlertTriangle },
             ].map(({ value, label, icon: Icon }) => (
-              <TabsTrigger key={value} value={value} className="flex items-center gap-1.5 px-3 py-2 text-xs font-semibold rounded-lg data-[state=active]:bg-violet-600 data-[state=active]:text-white">
+              <TabsTrigger key={value} value={value} className="flex items-center gap-1.5 px-3 py-2 text-xs font-semibold rounded-lg data-[state=active]:bg-gradient-to-r data-[state=active]:from-amber-500 data-[state=active]:to-amber-600 data-[state=active]:text-amber-950">
                 <Icon className="w-3.5 h-3.5" /> {label}
               </TabsTrigger>
             ))}
@@ -212,7 +212,7 @@ export default function Configuracoes() {
               </FieldGroup>
 
               <div className={cn("border-t pt-5 space-y-4", dark ? "border-white/5" : "border-zinc-100")}>
-                <p className={cn("text-xs font-bold uppercase tracking-widest flex items-center gap-2", dark ? "text-violet-400" : "text-violet-600")}>
+                <p className={cn("text-xs font-bold uppercase tracking-widest flex items-center gap-2", dark ? "text-amber-400" : "text-amber-600")}>
                   <Sparkles className="w-3.5 h-3.5" /> Secretária Virtual IA
                 </p>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -263,7 +263,7 @@ export default function Configuracoes() {
                         className={cn(
                           "px-3 py-1.5 rounded-lg text-xs font-semibold border transition-all",
                           ativo
-                            ? "bg-gradient-to-r from-violet-600 to-indigo-600 text-white border-transparent shadow-md shadow-violet-500/20"
+                            ? "bg-gradient-to-r from-amber-500 via-yellow-400 to-amber-600 text-amber-950 border-transparent shadow-md shadow-amber-400/30"
                             : dark ? "border-white/10 text-white/30 hover:border-white/20" : "border-zinc-200 text-zinc-400 hover:border-violet-200 hover:text-violet-600"
                         )}
                       >
@@ -309,7 +309,7 @@ export default function Configuracoes() {
                   {formData.profissionais?.map((prof, i) => (
                     <div key={i} className={cn("flex items-center justify-between p-3 rounded-xl border", dark ? "bg-white/3 border-white/5" : "bg-zinc-50 border-zinc-100")}>
                       <div className="flex items-center gap-3">
-                        <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-violet-500 to-indigo-500 flex items-center justify-center">
+                        <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-amber-400 via-yellow-300 to-amber-600 flex items-center justify-center">
                           <Stethoscope className="w-4 h-4 text-white" />
                         </div>
                         <div>
