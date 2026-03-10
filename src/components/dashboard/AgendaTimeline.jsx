@@ -7,29 +7,29 @@ import {
 } from "@/components/ui/dropdown-menu";
 
 const statusConfig = {
-  pendente:       { dot: 'bg-amber-400',   label: 'Pendente',        badge: 'bg-amber-50 text-amber-700 ring-amber-200' },
-  confirmado:     { dot: 'bg-emerald-400', label: 'Confirmado',      badge: 'bg-emerald-50 text-emerald-700 ring-emerald-200' },
-  cancelado:      { dot: 'bg-zinc-300',    label: 'Cancelado',       badge: 'bg-zinc-50 text-zinc-500 ring-zinc-200' },
-  remarcado:      { dot: 'bg-blue-400',    label: 'Remarcado',       badge: 'bg-blue-50 text-blue-700 ring-blue-200' },
-  concluido:      { dot: 'bg-zinc-400',    label: 'Concluído',       badge: 'bg-zinc-50 text-zinc-600 ring-zinc-200' },
-  nao_compareceu: { dot: 'bg-rose-400',    label: 'Não Compareceu',  badge: 'bg-rose-50 text-rose-700 ring-rose-200' },
+  pendente:       { dot: 'bg-amber-400',   label: 'Pendente',       badge: 'text-amber-600',   darkBadge: 'text-amber-300' },
+  confirmado:     { dot: 'bg-emerald-400', label: 'Confirmado',     badge: 'text-emerald-600', darkBadge: 'text-emerald-300' },
+  cancelado:      { dot: 'bg-zinc-300',    label: 'Cancelado',      badge: 'text-zinc-400',    darkBadge: 'text-white/30' },
+  remarcado:      { dot: 'bg-blue-400',    label: 'Remarcado',      badge: 'text-blue-600',    darkBadge: 'text-blue-300' },
+  concluido:      { dot: 'bg-zinc-400',    label: 'Concluído',      badge: 'text-zinc-500',    darkBadge: 'text-white/40' },
+  nao_compareceu: { dot: 'bg-rose-400',    label: 'Não Compareceu', badge: 'text-rose-600',    darkBadge: 'text-rose-300' },
 };
 
 const tipoLabel = {
   consulta: 'Consulta', exame: 'Exame', retorno: 'Retorno', procedimento: 'Procedimento',
 };
 
-export default function AgendaTimeline({ agendamentos, onStatusChange, onEdit }) {
+export default function AgendaTimeline({ agendamentos, onStatusChange, onEdit, dark = false }) {
   const sorted = [...agendamentos].sort((a, b) => new Date(a.data_hora_inicio) - new Date(b.data_hora_inicio));
 
   if (sorted.length === 0) {
     return (
       <div className="py-16 text-center">
-        <div className="w-12 h-12 mx-auto mb-3 rounded-2xl bg-zinc-100 flex items-center justify-center">
-          <Clock className="w-5 h-5 text-zinc-400" />
+        <div className={cn("w-12 h-12 mx-auto mb-3 rounded-2xl flex items-center justify-center", dark ? "bg-white/5" : "bg-zinc-100")}>
+          <Clock className={cn("w-5 h-5", dark ? "text-white/20" : "text-zinc-400")} />
         </div>
-        <p className="text-sm font-medium text-zinc-500">Nenhum agendamento neste período</p>
-        <p className="text-xs text-zinc-400 mt-1">A Maria agenda automaticamente via WhatsApp</p>
+        <p className={cn("text-sm font-medium", dark ? "text-white/30" : "text-zinc-500")}>Nenhum agendamento neste período</p>
+        <p className={cn("text-xs mt-1", dark ? "text-white/15" : "text-zinc-400")}>A secretária agenda automaticamente via WhatsApp</p>
       </div>
     );
   }
@@ -46,37 +46,40 @@ export default function AgendaTimeline({ agendamentos, onStatusChange, onEdit })
           <div
             key={ag.id}
             className={cn(
-              "bg-white rounded-xl border border-zinc-100 px-4 py-3.5 flex items-center gap-4 hover:border-zinc-200 transition-all",
-              isCanceled && "opacity-50"
+              "rounded-xl border px-4 py-3.5 flex items-center gap-4 transition-all",
+              dark
+                ? "bg-[#13131C] border-white/5 hover:border-white/10"
+                : "bg-white border-zinc-100 hover:border-zinc-200 hover:shadow-sm",
+              isCanceled && "opacity-40"
             )}
           >
             {/* Hora */}
             <div className="text-right min-w-[44px] flex-shrink-0">
-              <p className="text-sm font-bold text-zinc-900 tabular-nums">{horaInicio}</p>
-              {horaFim && <p className="text-[10px] text-zinc-400 tabular-nums">{horaFim}</p>}
+              <p className={cn("text-sm font-bold tabular-nums", dark ? "text-white/80" : "text-zinc-900")}>{horaInicio}</p>
+              {horaFim && <p className={cn("text-[10px] tabular-nums", dark ? "text-white/25" : "text-zinc-400")}>{horaFim}</p>}
             </div>
 
             {/* Divider */}
-            <div className="w-px h-10 bg-zinc-100 flex-shrink-0" />
+            <div className={cn("w-px h-10 flex-shrink-0", dark ? "bg-white/5" : "bg-zinc-100")} />
 
             {/* Info */}
             <div className="flex-1 min-w-0">
               <div className="flex items-center gap-2 flex-wrap">
-                <p className="text-sm font-semibold text-zinc-900 truncate">{ag.cliente_nome}</p>
-                <span className={cn("inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-semibold ring-1", s.badge)}>
-                  <span className={cn("w-1.5 h-1.5 rounded-full mr-1", s.dot)} />
+                <p className={cn("text-sm font-semibold truncate", dark ? "text-white/90" : "text-zinc-900")}>{ag.cliente_nome}</p>
+                <span className={cn("flex items-center gap-1 text-[10px] font-semibold", dark ? s.darkBadge : s.badge)}>
+                  <span className={cn("w-1.5 h-1.5 rounded-full", s.dot)} />
                   {s.label}
                 </span>
               </div>
-              <div className="flex items-center gap-3 mt-1 flex-wrap">
-                <span className="text-[11px] text-zinc-400 font-medium">{tipoLabel[ag.tipo] || ag.tipo}</span>
+              <div className="flex items-center gap-3 mt-0.5 flex-wrap">
+                <span className={cn("text-[11px] font-medium", dark ? "text-white/30" : "text-zinc-400")}>{tipoLabel[ag.tipo] || ag.tipo}</span>
                 {ag.profissional && (
-                  <span className="text-[11px] text-zinc-400 flex items-center gap-1">
+                  <span className={cn("text-[11px] flex items-center gap-1", dark ? "text-white/25" : "text-zinc-400")}>
                     <User className="w-3 h-3" />{ag.profissional}
                   </span>
                 )}
                 {ag.cliente_telefone && (
-                  <span className="text-[11px] text-zinc-400 flex items-center gap-1">
+                  <span className={cn("text-[11px] flex items-center gap-1", dark ? "text-white/20" : "text-zinc-400")}>
                     <Phone className="w-3 h-3" />{ag.cliente_telefone}
                   </span>
                 )}
@@ -89,13 +92,13 @@ export default function AgendaTimeline({ agendamentos, onStatusChange, onEdit })
                 <>
                   <button
                     onClick={() => onStatusChange?.(ag.id, 'confirmado')}
-                    className="w-7 h-7 rounded-lg flex items-center justify-center text-emerald-500 hover:bg-emerald-50 transition-colors"
+                    className={cn("w-7 h-7 rounded-lg flex items-center justify-center transition-colors text-emerald-500", dark ? "hover:bg-emerald-500/10" : "hover:bg-emerald-50")}
                   >
                     <CheckCircle2 className="w-4 h-4" />
                   </button>
                   <button
                     onClick={() => onStatusChange?.(ag.id, 'cancelado')}
-                    className="w-7 h-7 rounded-lg flex items-center justify-center text-zinc-300 hover:bg-zinc-50 hover:text-rose-500 transition-colors"
+                    className={cn("w-7 h-7 rounded-lg flex items-center justify-center transition-colors", dark ? "text-white/15 hover:text-rose-400 hover:bg-rose-500/10" : "text-zinc-300 hover:bg-zinc-50 hover:text-rose-500")}
                   >
                     <XCircle className="w-4 h-4" />
                   </button>
@@ -103,15 +106,15 @@ export default function AgendaTimeline({ agendamentos, onStatusChange, onEdit })
               )}
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <button className="w-7 h-7 rounded-lg flex items-center justify-center text-zinc-300 hover:bg-zinc-50 hover:text-zinc-600 transition-colors">
+                  <button className={cn("w-7 h-7 rounded-lg flex items-center justify-center transition-colors", dark ? "text-white/15 hover:text-white/40 hover:bg-white/5" : "text-zinc-300 hover:bg-zinc-50 hover:text-zinc-600")}>
                     <MoreHorizontal className="w-4 h-4" />
                   </button>
                 </DropdownMenuTrigger>
-                <DropdownMenuContent align="end" className="text-xs">
+                <DropdownMenuContent align="end" className={cn("text-xs border", dark ? "bg-[#1a1a28] border-white/10 text-white" : "")}>
                   <DropdownMenuItem onClick={() => onStatusChange?.(ag.id, 'confirmado')}>Confirmar</DropdownMenuItem>
                   <DropdownMenuItem onClick={() => onStatusChange?.(ag.id, 'concluido')}>Marcar Concluído</DropdownMenuItem>
                   <DropdownMenuItem onClick={() => onStatusChange?.(ag.id, 'nao_compareceu')}>Não Compareceu</DropdownMenuItem>
-                  <DropdownMenuItem onClick={() => onStatusChange?.(ag.id, 'cancelado')} className="text-rose-600">Cancelar</DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => onStatusChange?.(ag.id, 'cancelado')} className="text-rose-500">Cancelar</DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
             </div>
