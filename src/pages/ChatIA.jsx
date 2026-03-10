@@ -11,6 +11,7 @@ export default function ChatIA() {
   const [input, setInput] = useState('');
   const [sending, setSending] = useState(false);
   const [convId, setConvId] = useState(null);
+  const convRef = useRef(null);
   const [error, setError] = useState(null);
   const messagesEndRef = useRef(null);
   const inputRef = useRef(null);
