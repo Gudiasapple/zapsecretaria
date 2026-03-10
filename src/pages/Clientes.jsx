@@ -62,7 +62,7 @@ export default function Clientes() {
     c.cpf?.includes(searchTerm)
   );
 
-  const avatarColors = ['from-violet-500 to-indigo-500', 'from-emerald-400 to-teal-500', 'from-rose-400 to-pink-500', 'from-amber-400 to-orange-500', 'from-blue-400 to-cyan-500'];
+  const avatarColors = ['from-amber-400 to-amber-600', 'from-zinc-400 to-zinc-600', 'from-amber-300 to-yellow-500', 'from-slate-300 to-slate-500', 'from-amber-500 to-amber-700'];
 
   return (
     <div className={cn("min-h-screen px-4 py-8 md:px-8", dark ? "bg-[#0A0A0F]" : "bg-[#F5F6FA]")}>
@@ -71,13 +71,13 @@ export default function Clientes() {
         {/* Header */}
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <div>
-            <p className={cn("text-xs font-semibold uppercase tracking-[0.15em] mb-1.5", dark ? "text-violet-400" : "text-violet-500")}>Gestão</p>
+            <p className={cn("text-xs font-semibold uppercase tracking-[0.15em] mb-1.5", dark ? "text-amber-400" : "text-amber-600")}>Gestão</p>
             <h1 className={cn("text-3xl font-bold tracking-tight", dark ? "text-white" : "text-zinc-900")}>Pacientes</h1>
             <p className={cn("text-sm mt-1", dark ? "text-white/30" : "text-zinc-400")}>{clientes.length} paciente{clientes.length !== 1 ? 's' : ''} cadastrado{clientes.length !== 1 ? 's' : ''}</p>
           </div>
           <button
             onClick={() => { setSelectedCliente(null); setShowForm(true); }}
-            className="flex items-center gap-2 px-4 py-2.5 bg-gradient-to-r from-violet-600 to-indigo-600 hover:from-violet-700 hover:to-indigo-700 text-white text-xs font-semibold rounded-xl transition-all shadow-lg shadow-violet-500/25"
+            className="flex items-center gap-2 px-4 py-2.5 bg-gradient-to-r from-amber-500 via-yellow-400 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-amber-950 text-xs font-semibold rounded-xl transition-all shadow-lg shadow-amber-400/30"
           >
             <Plus className="w-4 h-4" />
             Novo Paciente

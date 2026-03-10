@@ -26,11 +26,11 @@ const filters = [
 
 function MetricCard({ label, value, icon: Icon, sub, accent = 'violet', dark }) {
   const accents = {
-    violet:  { grad: 'from-violet-500 to-indigo-500', glow: 'shadow-violet-500/20' },
-    emerald: { grad: 'from-emerald-400 to-teal-500',  glow: 'shadow-emerald-500/20' },
-    rose:    { grad: 'from-rose-400 to-pink-500',     glow: 'shadow-rose-500/20' },
-    amber:   { grad: 'from-amber-400 to-orange-500',  glow: 'shadow-amber-500/20' },
-    blue:    { grad: 'from-blue-400 to-cyan-500',     glow: 'shadow-blue-500/20' },
+    violet:  { grad: 'from-amber-400 via-yellow-300 to-amber-500',   glow: 'shadow-amber-400/30' },
+    emerald: { grad: 'from-slate-300 via-zinc-100 to-slate-400',     glow: 'shadow-zinc-400/20' },
+    rose:    { grad: 'from-rose-400 to-pink-500',                    glow: 'shadow-rose-500/20' },
+    amber:   { grad: 'from-amber-500 via-yellow-400 to-amber-600',   glow: 'shadow-amber-500/25' },
+    blue:    { grad: 'from-zinc-300 via-slate-200 to-zinc-500',      glow: 'shadow-zinc-400/20' },
   };
   const a = accents[accent] || accents.violet;
   return (
@@ -141,8 +141,8 @@ export default function Relatorios() {
 
   const gridColor   = dark ? 'rgba(255,255,255,0.04)' : '#f4f4f5';
   const tickColor   = dark ? 'rgba(255,255,255,0.25)' : '#a1a1aa';
-  const barFill     = dark ? '#7c3aed' : '#8b5cf6';
-  const areaStroke  = dark ? '#7c3aed' : '#8b5cf6';
+  const barFill     = dark ? '#d97706' : '#f59e0b';
+  const areaStroke  = dark ? '#d97706' : '#f59e0b';
   const areaFillId  = dark ? 'areaDark' : 'areaLight';
 
   return (
@@ -152,7 +152,7 @@ export default function Relatorios() {
         {/* Header */}
         <div className="flex items-start justify-between">
           <div>
-            <p className={cn("text-xs font-semibold uppercase tracking-[0.15em] mb-1.5", dark ? "text-violet-400" : "text-violet-500")}>Análise</p>
+            <p className={cn("text-xs font-semibold uppercase tracking-[0.15em] mb-1.5", dark ? "text-amber-400" : "text-amber-600")}>Análise</p>
             <h1 className={cn("text-3xl font-bold tracking-tight", dark ? "text-white" : "text-zinc-900")}>Relatórios</h1>
           </div>
           <div className={cn("flex p-0.5 rounded-xl border gap-0.5", dark ? "bg-white/5 border-white/5" : "bg-white border-zinc-200")}>
@@ -163,7 +163,7 @@ export default function Relatorios() {
                 className={cn(
                   "px-4 py-1.5 text-xs font-bold rounded-lg transition-all",
                   selectedDays === f.days
-                    ? "bg-gradient-to-r from-violet-600 to-indigo-600 text-white shadow-md shadow-violet-500/20"
+                    ? "bg-gradient-to-r from-amber-500 via-yellow-400 to-amber-600 text-amber-950 shadow-md shadow-amber-400/30"
                     : dark ? "text-white/30 hover:text-white/60" : "text-zinc-400 hover:text-zinc-700"
                 )}
               >
@@ -197,12 +197,12 @@ export default function Relatorios() {
                 <AreaChart data={byDayData}>
                   <defs>
                     <linearGradient id="areaDark" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="0%"   stopColor="#7c3aed" stopOpacity={0.4} />
-                      <stop offset="100%" stopColor="#7c3aed" stopOpacity={0} />
+                      <stop offset="0%"   stopColor="#d97706" stopOpacity={0.4} />
+                      <stop offset="100%" stopColor="#d97706" stopOpacity={0} />
                     </linearGradient>
                     <linearGradient id="areaLight" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="0%"   stopColor="#8b5cf6" stopOpacity={0.15} />
-                      <stop offset="100%" stopColor="#8b5cf6" stopOpacity={0} />
+                      <stop offset="0%"   stopColor="#f59e0b" stopOpacity={0.18} />
+                      <stop offset="100%" stopColor="#f59e0b" stopOpacity={0} />
                     </linearGradient>
                   </defs>
                   <CartesianGrid strokeDasharray="3 3" stroke={gridColor} vertical={false} />
