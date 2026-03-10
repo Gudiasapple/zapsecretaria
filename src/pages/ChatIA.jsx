@@ -98,8 +98,27 @@ export default function ChatIA() {
       setConversation(updated);
       setMessages(updated.messages || []);
     } catch (e) {
-      setError('Erro ao enviar: ' + (e?.message || 'tente novamente'));
-      setStatus('error');
+      // Conversa expirou (Invalid id / Object not found) — recria automaticamente
+      if (e?.message?.includes('Invalid id') || e?.message?.includes('Object not found') || e?.message?.includes('not found')) {
+        try {
+          const newConv = await base44.agents.createConversation({
+            agent_name: 'dra_maria',
+            metadata: { name: 'Teste via Dashboard' },
+          });
+          conversationRef.current = newConv;
+          setConversation(newConv);
+          const updated = await base44.agents.addMessage(newConv, { role: 'user', content: text });
+          conversationRef.current = updated;
+          setConversation(updated);
+          setMessages(updated.messages || []);
+        } catch (e2) {
+          setError('Erro ao enviar: ' + (e2?.message || 'tente novamente'));
+          setStatus('error');
+        }
+      } else {
+        setError('Erro ao enviar: ' + (e?.message || 'tente novamente'));
+        setStatus('error');
+      }
     }
 
     setSending(false);
