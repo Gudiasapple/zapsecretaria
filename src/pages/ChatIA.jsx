@@ -17,9 +17,21 @@ export default function ChatIA() {
   const messagesEndRef = useRef(null);
   const inputRef = useRef(null);
 
+  const [user, setUser] = useState(null);
+
   useEffect(() => {
-    createNewConversation();
+    base44.auth.me().then(u => {
+      if (u) {
+        setUser(u);
+      } else {
+        base44.auth.redirectToLogin();
+      }
+    });
   }, []);
+
+  useEffect(() => {
+    if (user) createNewConversation();
+  }, [user]);
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
