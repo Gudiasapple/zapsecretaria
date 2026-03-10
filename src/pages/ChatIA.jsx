@@ -91,6 +91,11 @@ export default function ChatIA() {
     }
   };
 
+  if (isAuthenticated === false) {
+    base44.auth.redirectToLogin(window.location.pathname);
+    return null;
+  }
+
   return (
     <div className={cn("flex flex-col", dark ? "bg-[#0A0A0F]" : "bg-[#F5F6FA]")} style={{ height: 'calc(100vh - 56px)' }}>
 
