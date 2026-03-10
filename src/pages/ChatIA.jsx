@@ -56,20 +56,27 @@ export default function ChatIA() {
     // Adiciona mensagem do usuário localmente imediatamente
     setMessages(prev => [...prev, { role: 'user', content: text, id: `local-${Date.now()}` }]);
 
-    let currentConvId = convId;
+    try {
+      if (!convRef.current) {
+        const conv = await base44.agents.createConversation({
+          agent_name: 'dra_maria',
+          metadata: { name: 'Chat de teste' },
+        });
+        convRef.current = conv;
+        setConvId(conv.id);
+      }
 
-    if (!convRef.current) {
-      const conv = await base44.agents.createConversation({
-        agent_name: 'dra_maria',
-        metadata: { name: 'Chat de teste' },
-      });
-      convRef.current = conv;
-      setConvId(conv.id);
+      await base44.agents.addMessage(convRef.current, { role: 'user', content: text });
+    } catch (err) {
+      setError('Erro ao enviar mensagem: ' + (err?.message || 'tente novamente'));
+      // Se falhou na criação da conversa, reseta para tentar de novo
+      if (!convId) {
+        convRef.current = null;
+      }
+    } finally {
+      setSending(false);
+      inputRef.current?.focus();
     }
-
-    await base44.agents.addMessage(convRef.current, { role: 'user', content: text });
-    setSending(false);
-    inputRef.current?.focus();
   };
 
   const handleKeyDown = (e) => {
