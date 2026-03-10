@@ -8,10 +8,12 @@ import ReactMarkdown from 'react-markdown';
 export default function ChatIA() {
   const { dark } = useTheme();
   const [conversation, setConversation] = useState(null);
+  const conversationRef = useRef(null);
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState('');
   const [sending, setSending] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
   const messagesEndRef = useRef(null);
   const inputRef = useRef(null);
 
