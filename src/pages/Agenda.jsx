@@ -28,6 +28,7 @@ const tipoColors = {
 };
 
 export default function Agenda() {
+  const { dark } = useTheme();
   const queryClient = useQueryClient();
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [showForm, setShowForm] = useState(false);
