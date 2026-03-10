@@ -28,7 +28,7 @@ export default function ChatIA() {
     // Limpa sub anterior
     if (unsubRef.current) unsubRef.current();
 
-    const unsub = base44.agents.subscribeToConversation(convRef.current, (data) => {
+    const unsub = base44.agents.subscribeToConversation(convId, (data) => {
       const visible = (data.messages || []).filter(m => m.role === 'user' || m.role === 'assistant');
       setMessages(visible);
     });
