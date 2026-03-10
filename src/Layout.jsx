@@ -83,8 +83,8 @@ export default function Layout({ children, currentPageName }) {
                     "flex items-center gap-3 px-3 py-2.5 rounded-xl text-[13px] font-medium transition-all group",
                     isActive
                       ? dark
-                        ? "bg-violet-600/20 text-violet-300 border border-violet-500/20"
-                        : "bg-violet-50 text-violet-700 border border-violet-100"
+                        ? "bg-amber-500/15 text-amber-300 border border-amber-500/20"
+                        : "bg-amber-50 text-amber-800 border border-amber-200"
                       : dark
                         ? "text-white/40 hover:text-white/80 hover:bg-white/5"
                         : "text-zinc-500 hover:text-zinc-900 hover:bg-zinc-50"
@@ -93,12 +93,12 @@ export default function Layout({ children, currentPageName }) {
                   <item.icon className={cn(
                     "w-4 h-4 flex-shrink-0",
                     isActive
-                      ? dark ? "text-violet-400" : "text-violet-600"
+                      ? dark ? "text-amber-400" : "text-amber-700"
                       : dark ? "text-white/30 group-hover:text-white/60" : "text-zinc-400 group-hover:text-zinc-600"
                   )} />
                   {item.name}
                   {isActive && (
-                    <span className="ml-auto w-1.5 h-1.5 rounded-full bg-violet-500" />
+                    <span className="ml-auto w-1.5 h-1.5 rounded-full bg-amber-400" />
                   )}
                 </Link>
               );
@@ -165,8 +165,8 @@ export default function Layout({ children, currentPageName }) {
                 <Menu className="w-5 h-5" />
               </button>
               <div className="flex items-center gap-2">
-                <div className="w-6 h-6 rounded-lg bg-gradient-to-br from-violet-500 to-indigo-600 flex items-center justify-center">
-                  <Sparkles className="w-3 h-3 text-white" />
+                <div className="w-6 h-6 rounded-lg bg-gradient-to-br from-amber-400 via-yellow-300 to-amber-600 flex items-center justify-center">
+                  <Sparkles className="w-3 h-3 text-amber-900" />
                 </div>
                 <span className={cn("font-bold text-sm", dark ? "text-white" : "text-zinc-900")}>ZapSecretarIA</span>
               </div>
