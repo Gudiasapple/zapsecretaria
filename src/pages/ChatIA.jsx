@@ -23,7 +23,7 @@ export default function ChatIA() {
 
   // Subscribe quando temos um convId
   useEffect(() => {
-    if (!convId) return;
+    if (!convId || !convRef.current) return;
 
     // Limpa sub anterior
     if (unsubRef.current) unsubRef.current();
