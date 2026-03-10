@@ -57,19 +57,16 @@ export default function ChatIA() {
 
     let currentConvId = convId;
 
-    if (!currentConvId) {
+    if (!convRef.current) {
       const conv = await base44.agents.createConversation({
         agent_name: 'dra_maria',
         metadata: { name: 'Chat de teste' },
       });
-      console.log('createConversation retornou:', JSON.stringify(conv));
-      // Tenta pegar o id de diferentes formatos possíveis
-      currentConvId = conv?.id || conv?.conversation_id || conv?._id || conv;
-      console.log('convId extraído:', currentConvId);
-      setConvId(currentConvId);
+      convRef.current = conv;
+      setConvId(conv.id);
     }
 
-    await base44.agents.addMessage(currentConvId, { role: 'user', content: text });
+    await base44.agents.addMessage(convRef.current, { role: 'user', content: text });
     setSending(false);
     inputRef.current?.focus();
   };
