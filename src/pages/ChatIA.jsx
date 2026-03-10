@@ -37,12 +37,14 @@ export default function ChatIA() {
     setMessages(prev => [...prev, { role: 'user', content: text, id: Date.now() }]);
 
     try {
-      // Cria conversa na hora se não existe
+      // Cria conversa se não existe
       if (!convRef.current) {
         const conv = await base44.agents.createConversation({
           agent_name: 'dra_maria',
           metadata: { name: 'Teste via Dashboard' },
         });
+        // Aguarda a conversa ser persistida no servidor
+        await new Promise(r => setTimeout(r, 1000));
         convRef.current = conv;
       }
 
