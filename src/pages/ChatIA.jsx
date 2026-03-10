@@ -138,11 +138,13 @@ export default function ChatIA() {
             </div>
           </div>
         ) : visibleMessages.length === 0 ? (
-          <div className="flex flex-col items-center justify-center h-full gap-3">
-            <div className={cn("w-14 h-14 rounded-2xl flex items-center justify-center", dark ? "bg-white/5" : "bg-zinc-100")}>
-              <MessageCircle className={cn("w-6 h-6", dark ? "text-white/20" : "text-zinc-400")} />
+          <div className="flex gap-3 justify-start">
+            <div className={cn("w-8 h-8 rounded-xl flex items-center justify-center flex-shrink-0 mt-0.5", dark ? "bg-amber-500/15" : "bg-amber-100")}>
+              <Bot className={cn("w-4 h-4", dark ? "text-amber-400" : "text-amber-700")} />
             </div>
-            <p className={cn("text-sm font-medium", dark ? "text-white/30" : "text-zinc-500")}>Aguardando resposta da IA...</p>
+            <div className={cn("rounded-2xl px-4 py-2.5 border max-w-[75%]", dark ? "bg-[#13131C] border-white/5 text-white/90" : "bg-white border-zinc-100 text-zinc-900")}>
+              <p className="text-sm leading-relaxed">Oi! 😊 Aqui é a Maria, da clínica. Como posso te ajudar hoje?</p>
+            </div>
           </div>
         ) : (
           visibleMessages.map((msg, i) => (
