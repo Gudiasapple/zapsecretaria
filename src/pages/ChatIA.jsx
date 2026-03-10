@@ -45,12 +45,10 @@ export default function ChatIA() {
     setLoading(false);
   };
 
-  const handleNewChat = async () => {
-    setLoading(true);
+  const handleNewChat = () => {
     setConversation(null);
     setMessages([]);
-    await createNewConversation();
-    setLoading(false);
+    createNewConversation();
   };
 
   const handleSend = async () => {
