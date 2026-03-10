@@ -13,9 +13,14 @@ export default function ChatIA() {
   const [convId, setConvId] = useState(null);
   const convRef = useRef(null);
   const [error, setError] = useState(null);
+  const [isAuthenticated, setIsAuthenticated] = useState(null);
   const messagesEndRef = useRef(null);
   const inputRef = useRef(null);
   const unsubRef = useRef(null);
+
+  useEffect(() => {
+    base44.auth.isAuthenticated().then(setIsAuthenticated);
+  }, []);
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
