@@ -60,8 +60,8 @@ export default function Layout({ children, currentPageName }) {
           {/* Logo */}
           <div className={cn("px-5 py-6 border-b", dark ? "border-white/5" : "border-zinc-100")}>
             <div className="flex items-center gap-3">
-              <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-violet-500 to-indigo-600 flex items-center justify-center shadow-lg shadow-violet-500/20">
-                <Sparkles className="w-4 h-4 text-white" />
+              <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-amber-400 via-yellow-300 to-amber-600 flex items-center justify-center shadow-lg shadow-amber-500/30">
+                <Sparkles className="w-4 h-4 text-amber-900" />
               </div>
               <div>
                 <p className={cn("text-[14px] font-bold tracking-tight", dark ? "text-white" : "text-zinc-900")}>ZapSecretarIA</p>
