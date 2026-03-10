@@ -50,19 +50,13 @@ export default function Agenda() {
   }, []);
 
   const { data: agendamentos = [], isLoading } = useQuery({
-    queryKey: ['agendamentos', userEmail],
-    queryFn: () => userEmail
-      ? base44.entities.Agendamento.filter({ created_by: userEmail }, '-data_hora_inicio')
-      : [],
-    enabled: !!userEmail,
+    queryKey: ['agendamentos'],
+    queryFn: () => base44.entities.Agendamento.list('-data_hora_inicio'),
   });
 
   const { data: clientes = [] } = useQuery({
-    queryKey: ['clientes', userEmail],
-    queryFn: () => userEmail
-      ? base44.entities.Cliente.filter({ created_by: userEmail })
-      : [],
-    enabled: !!userEmail,
+    queryKey: ['clientes'],
+    queryFn: () => base44.entities.Cliente.list(),
   });
 
   const createMutation = useMutation({
