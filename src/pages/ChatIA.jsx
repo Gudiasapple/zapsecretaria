@@ -37,17 +37,16 @@ export default function ChatIA() {
     setMessages(prev => [...prev, { role: 'user', content: text, id: Date.now() }]);
 
     try {
-      // Cria conversa se não existe
+      // Cria conversa se não existe, passando o objeto completo para addMessage
       if (!convRef.current) {
-        const conv = await base44.agents.createConversation({
+        convRef.current = await base44.agents.createConversation({
           agent_name: 'dra_maria',
           metadata: { name: 'Teste via Dashboard' },
         });
-        convRef.current = conv;
       }
 
-      const convId = convRef.current?.id || convRef.current;
-      const updated = await base44.agents.addMessage(convId, { role: 'user', content: text });
+      // Passa o objeto conversa completo (não só o ID)
+      const updated = await base44.agents.addMessage(convRef.current, { role: 'user', content: text });
       convRef.current = updated;
       setMessages(updated.messages?.filter(m => m.role === 'user' || m.role === 'assistant') || []);
     } catch (e) {
