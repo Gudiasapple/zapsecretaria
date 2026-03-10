@@ -59,7 +59,7 @@ export default function Conversas() {
       <div className="max-w-7xl mx-auto space-y-6">
 
         <div>
-          <p className={cn("text-xs font-semibold uppercase tracking-[0.15em] mb-1.5", dark ? "text-violet-400" : "text-violet-500")}>WhatsApp</p>
+          <p className={cn("text-xs font-semibold uppercase tracking-[0.15em] mb-1.5", dark ? "text-amber-400" : "text-amber-600")}>WhatsApp</p>
           <h1 className={cn("text-3xl font-bold tracking-tight", dark ? "text-white" : "text-zinc-900")}>Conversas</h1>
           <p className={cn("text-sm mt-1", dark ? "text-white/30" : "text-zinc-400")}>Histórico de atendimentos da secretária IA</p>
         </div>
@@ -107,7 +107,7 @@ export default function Conversas() {
                         className={cn(
                           "p-3 rounded-xl cursor-pointer transition-all",
                           isSelected
-                            ? dark ? "bg-violet-600/15 border border-violet-500/20" : "bg-violet-50 border border-violet-100"
+                            ? dark ? "bg-amber-500/10 border border-amber-500/20" : "bg-amber-50 border border-amber-100"
                             : dark ? "hover:bg-white/[0.03] border border-transparent" : "hover:bg-zinc-50 border border-transparent"
                         )}
                       >
@@ -180,8 +180,8 @@ export default function Conversas() {
                       return (
                         <div key={i} className={cn("flex gap-3", isBot ? "justify-start" : "justify-end")}>
                           {isBot && (
-                            <div className={cn("w-7 h-7 rounded-lg flex items-center justify-center flex-shrink-0 mt-0.5", dark ? "bg-violet-500/20" : "bg-violet-100")}>
-                              <Bot className={cn("w-3.5 h-3.5", dark ? "text-violet-300" : "text-violet-600")} />
+                            <div className={cn("w-7 h-7 rounded-lg flex items-center justify-center flex-shrink-0 mt-0.5", dark ? "bg-amber-500/15" : "bg-amber-100")}>
+                              <Bot className={cn("w-3.5 h-3.5", dark ? "text-amber-300" : "text-amber-700")} />
                             </div>
                           )}
                           <div className={cn(

@@ -158,7 +158,7 @@ export default function Agenda() {
             </button>
             <button
               onClick={() => { setSelectedAgendamento(null); setShowForm(true); }}
-              className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-violet-600 to-indigo-600 hover:from-violet-700 hover:to-indigo-700 text-white text-xs font-semibold rounded-xl transition-all shadow-lg shadow-violet-500/25"
+              className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-amber-500 via-yellow-400 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-amber-950 text-xs font-semibold rounded-xl transition-all shadow-lg shadow-amber-400/30"
             >
               <Plus className="w-4 h-4" />
               Novo
@@ -181,7 +181,7 @@ export default function Agenda() {
                     className={cn(
                       "p-3 text-center border-r last:border-r-0",
                       dark ? "border-white/5" : "border-zinc-100",
-                      isToday(day) && (dark ? "bg-violet-500/10" : "bg-violet-50")
+                      isToday(day) && (dark ? "bg-amber-500/10" : "bg-amber-50")
                     )}
                   >
                     <p className={cn("text-[10px] font-bold uppercase tracking-widest", dark ? "text-white/25" : "text-zinc-400")}>
@@ -189,7 +189,7 @@ export default function Agenda() {
                     </p>
                     <p className={cn(
                       "text-xl font-bold mt-1",
-                      isToday(day) ? "text-violet-500" : dark ? "text-white/70" : "text-zinc-800"
+                      isToday(day) ? "text-amber-500" : dark ? "text-white/70" : "text-zinc-800"
                     )}>
                       {format(day, 'd')}
                     </p>
@@ -212,7 +212,7 @@ export default function Agenda() {
                           className={cn(
                             "p-1 min-h-[60px] transition-colors cursor-pointer",
                             dark ? "hover:bg-white/[0.02]" : "hover:bg-zinc-50",
-                            isToday(day) && (dark ? "bg-violet-500/[0.04]" : "bg-violet-50/20")
+                            isToday(day) && (dark ? "bg-amber-500/[0.04]" : "bg-amber-50/20")
                           )}
                           onClick={() => {
                             setSelectedDate(day);
