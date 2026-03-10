@@ -12,26 +12,14 @@ export default function ChatIA() {
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState('');
   const [sending, setSending] = useState(false);
-  const [loading, setLoading] = useState(true);
+  const [status, setStatus] = useState('idle'); // 'idle' | 'loading' | 'ready' | 'error'
   const [error, setError] = useState(null);
   const messagesEndRef = useRef(null);
   const inputRef = useRef(null);
 
-  const [user, setUser] = useState(null);
-
   useEffect(() => {
-    base44.auth.me().then(u => {
-      if (u) {
-        setUser(u);
-      } else {
-        base44.auth.redirectToLogin();
-      }
-    });
+    init();
   }, []);
-
-  useEffect(() => {
-    if (user) createNewConversation();
-  }, [user]);
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -52,23 +40,45 @@ export default function ChatIA() {
     };
   }, [conversation?.id]);
 
-  const createNewConversation = async () => {
-    setLoading(true);
+  const init = async () => {
+    setStatus('loading');
     setError(null);
+    try {
+      // Garante autenticação
+      const user = await base44.auth.me();
+      if (!user) {
+        base44.auth.redirectToLogin();
+        return;
+      }
+      await startConversation();
+    } catch (e) {
+      setError(e?.message || 'Erro ao iniciar');
+      setStatus('error');
+    }
+  };
+
+  const startConversation = async () => {
+    setStatus('loading');
     conversationRef.current = null;
     setConversation(null);
     setMessages([]);
+    const conv = await base44.agents.createConversation({
+      agent_name: 'dra_maria',
+      metadata: { name: 'Teste via Dashboard' },
+    });
+    conversationRef.current = conv;
+    setConversation(conv);
+    setStatus('ready');
+  };
+
+  const handleNewChat = async () => {
+    setError(null);
     try {
-      const conv = await base44.agents.createConversation({
-        agent_name: 'dra_maria',
-        metadata: { name: 'Teste via Dashboard' },
-      });
-      conversationRef.current = conv;
-      setConversation(conv);
+      await startConversation();
     } catch (e) {
-      setError('Erro: ' + (e?.message || JSON.stringify(e)));
+      setError(e?.message || 'Erro ao criar conversa');
+      setStatus('error');
     }
-    setLoading(false);
   };
 
   const handleSend = async () => {
@@ -86,21 +96,8 @@ export default function ChatIA() {
       setConversation(updated);
       setMessages(updated.messages || []);
     } catch (e) {
-      // Conversa expirou — recria e tenta novamente
-      try {
-        const newConv = await base44.agents.createConversation({
-          agent_name: 'dra_maria',
-          metadata: { name: 'Teste via Dashboard' },
-        });
-        conversationRef.current = newConv;
-        setConversation(newConv);
-        const updated = await base44.agents.addMessage(newConv, { role: 'user', content: text });
-        conversationRef.current = updated;
-        setConversation(updated);
-        setMessages(updated.messages || []);
-      } catch (e2) {
-        setError('Erro ao enviar mensagem. Tente nova conversa.');
-      }
+      setError('Erro ao enviar: ' + (e?.message || 'tente novamente'));
+      setStatus('error');
     }
 
     setSending(false);
@@ -115,11 +112,12 @@ export default function ChatIA() {
   };
 
   const visibleMessages = messages.filter(m => m.role === 'user' || m.role === 'assistant');
+  const isLoading = status === 'loading' || status === 'idle';
 
   return (
     <div
       className={cn("flex flex-col", dark ? "bg-[#0A0A0F]" : "bg-[#F5F6FA]")}
-      style={{ height: 'calc(100vh - 0px)' }}
+      style={{ height: 'calc(100vh - 56px)' }}
     >
       {/* Header */}
       <div className={cn(
@@ -133,14 +131,16 @@ export default function ChatIA() {
           <div>
             <p className={cn("text-sm font-bold", dark ? "text-white" : "text-zinc-900")}>Maria — Secretária IA</p>
             <div className="flex items-center gap-1.5">
-              <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
-              <p className={cn("text-[11px]", dark ? "text-white/40" : "text-zinc-400")}>Ativa · Modo de teste</p>
+              <span className={cn("w-1.5 h-1.5 rounded-full", isLoading ? "bg-amber-400 animate-pulse" : "bg-emerald-400 animate-pulse")} />
+              <p className={cn("text-[11px]", dark ? "text-white/40" : "text-zinc-400")}>
+                {isLoading ? 'Conectando...' : 'Ativa · Modo de teste'}
+              </p>
             </div>
           </div>
         </div>
         <button
-          onClick={createNewConversation}
-          disabled={loading}
+          onClick={handleNewChat}
+          disabled={isLoading}
           className={cn(
             "flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-semibold border transition-all disabled:opacity-40",
             dark ? "border-white/10 text-white/40 hover:text-white/70 hover:bg-white/5" : "border-zinc-200 text-zinc-400 hover:text-zinc-700 hover:bg-zinc-50"
@@ -153,18 +153,18 @@ export default function ChatIA() {
 
       {/* Messages */}
       <div className="flex-1 overflow-y-auto px-4 py-6 space-y-4 min-h-0">
-        {loading ? (
+        {isLoading ? (
           <div className="flex items-center justify-center h-full">
             <div className="flex items-center gap-3">
               <Loader2 className={cn("w-5 h-5 animate-spin", dark ? "text-amber-400" : "text-amber-500")} />
               <p className={cn("text-sm", dark ? "text-white/40" : "text-zinc-400")}>Iniciando conversa...</p>
             </div>
           </div>
-        ) : error ? (
+        ) : status === 'error' ? (
           <div className="flex flex-col items-center justify-center h-full gap-3">
-            <p className={cn("text-sm", dark ? "text-rose-400" : "text-rose-500")}>{error}</p>
+            <p className={cn("text-sm text-center px-4", dark ? "text-rose-400" : "text-rose-500")}>{error}</p>
             <button
-              onClick={createNewConversation}
+              onClick={handleNewChat}
               className="px-4 py-2 rounded-xl bg-amber-500 text-amber-950 text-xs font-semibold"
             >
               Tentar novamente
@@ -226,11 +226,11 @@ export default function ChatIA() {
               "flex-1 bg-transparent outline-none resize-none text-sm leading-relaxed",
               dark ? "text-white placeholder:text-white/25" : "text-zinc-900 placeholder:text-zinc-400"
             )}
-            disabled={sending || loading}
+            disabled={sending || isLoading}
           />
           <button
             onClick={handleSend}
-            disabled={!input.trim() || sending || loading}
+            disabled={!input.trim() || sending || isLoading}
             className="w-8 h-8 rounded-xl bg-gradient-to-br from-amber-500 via-yellow-400 to-amber-600 flex items-center justify-center flex-shrink-0 disabled:opacity-30 transition-all hover:shadow-lg hover:shadow-amber-400/30"
           >
             <Send className="w-3.5 h-3.5 text-amber-950" />
