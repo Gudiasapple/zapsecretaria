@@ -24,7 +24,10 @@ const navigation = [
 
 export default function Layout({ children, currentPageName }) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const [dark, setDark] = useState(() => localStorage.getItem('theme') === 'dark');
+  const [dark, setDark] = useState(() => {
+    const saved = localStorage.getItem('theme');
+    return saved ? saved === 'dark' : true; // dark é o padrão
+  });
 
   const toggleTheme = () => {
     const next = !dark;
