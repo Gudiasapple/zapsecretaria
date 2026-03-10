@@ -48,25 +48,25 @@
  * The mainPage value must match a key in the PAGES object exactly.
  */
 import Agenda from './pages/Agenda';
+import ChatIA from './pages/ChatIA';
 import Clientes from './pages/Clientes';
 import ConectarWhatsApp from './pages/ConectarWhatsApp';
 import Configuracoes from './pages/Configuracoes';
 import Conversas from './pages/Conversas';
 import Dashboard from './pages/Dashboard';
 import Relatorios from './pages/Relatorios';
-import ChatIA from './pages/ChatIA';
 import __Layout from './Layout.jsx';
 
 
 export const PAGES = {
     "Agenda": Agenda,
+    "ChatIA": ChatIA,
     "Clientes": Clientes,
     "ConectarWhatsApp": ConectarWhatsApp,
     "Configuracoes": Configuracoes,
     "Conversas": Conversas,
     "Dashboard": Dashboard,
     "Relatorios": Relatorios,
-    "ChatIA": ChatIA,
 }
 
 export const pagesConfig = {

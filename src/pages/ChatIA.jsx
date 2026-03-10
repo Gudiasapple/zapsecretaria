@@ -15,9 +15,9 @@ export default function ChatIA() {
   const messagesEndRef = useRef(null);
   const inputRef = useRef(null);
 
-  // Cria ou carrega conversa ao montar
+  // Cria conversa ao montar
   useEffect(() => {
-    initConversation();
+    createNewConversation();
   }, []);
 
   // Auto-scroll
@@ -34,33 +34,15 @@ export default function ChatIA() {
     return unsub;
   }, [conversation?.id]);
 
-  const initConversation = async () => {
-    setLoading(true);
-    try {
-      // Tenta pegar conversas existentes
-      const convs = await base44.agents.listConversations({ agent_name: 'dra_maria' });
-      // Pega a mais recente com metadata de teste
-      const existing = convs.find(c => c.metadata?.tipo === 'teste_ui');
-      if (existing) {
-        const full = await base44.agents.getConversation(existing.id);
-        setConversation(full);
-        setMessages(full.messages || []);
-      } else {
-        await createNewConversation();
-      }
-    } catch {
-      await createNewConversation();
-    }
-    setLoading(false);
-  };
-
   const createNewConversation = async () => {
+    setLoading(true);
     const conv = await base44.agents.createConversation({
       agent_name: 'dra_maria',
-      metadata: { tipo: 'teste_ui', name: 'Teste via Dashboard' },
+      metadata: { name: 'Teste via Dashboard' },
     });
     setConversation(conv);
-    setMessages(conv.messages || []);
+    setMessages([]);
+    setLoading(false);
   };
 
   const handleNewChat = async () => {
