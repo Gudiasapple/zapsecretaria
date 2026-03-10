@@ -126,7 +126,7 @@ export default function Dashboard() {
         {/* Header */}
         <div className="flex items-start justify-between">
           <div>
-            <p className={cn("text-xs font-semibold uppercase tracking-[0.15em] mb-1.5", dark ? "text-violet-400" : "text-violet-500")}>
+            <p className={cn("text-xs font-semibold uppercase tracking-[0.15em] mb-1.5", dark ? "text-amber-400" : "text-amber-600")}>
               {format(today, "EEEE", { locale: ptBR })}
             </p>
             <h1 className={cn("text-3xl font-bold tracking-tight", dark ? "text-white" : "text-zinc-900")}>
@@ -189,7 +189,7 @@ export default function Dashboard() {
           <div className="space-y-4">
 
             {/* IA Card */}
-            <div className="relative rounded-2xl p-6 overflow-hidden bg-gradient-to-br from-violet-600 via-indigo-600 to-purple-700">
+            <div className="relative rounded-2xl p-6 overflow-hidden bg-gradient-to-br from-zinc-900 via-zinc-800 to-zinc-950">
               <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,rgba(255,255,255,0.08),transparent_60%)]" />
               <div className="relative">
                 <div className="flex items-center gap-3 mb-5">
