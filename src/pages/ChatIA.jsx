@@ -16,31 +16,19 @@ export default function ChatIA() {
   const messagesEndRef = useRef(null);
   const inputRef = useRef(null);
 
-  useEffect(() => { startChat(); }, []);
-
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
 
-  const startChat = async () => {
-    setLoading(true);
+  const startChat = () => {
     setError(null);
     setMessages([]);
-    convRef.current = null;
-    try {
-      const conv = await base44.agents.createConversation({
-        agent_name: 'dra_maria',
-        metadata: { name: 'Teste via Dashboard' },
-      });
-      convRef.current = conv;
-    } catch (e) {
-      setError(e?.message || 'Erro ao iniciar conversa');
-    }
     setLoading(false);
+    convRef.current = null;
   };
 
   const handleSend = async () => {
-    if (!input.trim() || sending || !convRef.current) return;
+    if (!input.trim() || sending) return;
     const text = input.trim();
     setInput('');
     setSending(true);
@@ -49,6 +37,15 @@ export default function ChatIA() {
     setMessages(prev => [...prev, { role: 'user', content: text, id: Date.now() }]);
 
     try {
+      // Cria conversa na hora se não existe
+      if (!convRef.current) {
+        const conv = await base44.agents.createConversation({
+          agent_name: 'dra_maria',
+          metadata: { name: 'Teste via Dashboard' },
+        });
+        convRef.current = conv;
+      }
+
       const updated = await base44.agents.addMessage(convRef.current, { role: 'user', content: text });
       convRef.current = updated;
       setMessages(updated.messages?.filter(m => m.role === 'user' || m.role === 'assistant') || []);
