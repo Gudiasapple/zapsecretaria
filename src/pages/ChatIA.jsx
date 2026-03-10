@@ -54,7 +54,7 @@ export default function ChatIA() {
       conversationRef.current = conv;
       setConversation(conv);
     } catch (e) {
-      setError('Não foi possível iniciar a conversa. Tente novamente.');
+      setError('Erro: ' + (e?.message || JSON.stringify(e)));
     }
     setLoading(false);
   };
