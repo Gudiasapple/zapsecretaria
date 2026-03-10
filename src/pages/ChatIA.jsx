@@ -38,23 +38,26 @@ export default function ChatIA() {
 
   const createNewConversation = async () => {
     setLoading(true);
+    setError(null);
+    setConversation(null);
+    conversationRef.current = null;
+    setMessages([]);
     const conv = await base44.agents.createConversation({
       agent_name: 'dra_maria',
       metadata: { name: 'Teste via Dashboard' },
     });
+    conversationRef.current = conv;
     setConversation(conv);
-    setMessages([]);
     setLoading(false);
   };
 
   const handleNewChat = () => {
-    setConversation(null);
-    setMessages([]);
     createNewConversation();
   };
 
   const handleSend = async () => {
-    if (!input.trim() || sending || !conversation) return;
+    const conv = conversationRef.current;
+    if (!input.trim() || sending || !conv) return;
     const text = input.trim();
     setInput('');
     setSending(true);
@@ -62,7 +65,8 @@ export default function ChatIA() {
     // Mostra mensagem do usuário imediatamente
     setMessages(prev => [...prev, { role: 'user', content: text, id: 'tmp-' + Date.now() }]);
 
-    const updated = await base44.agents.addMessage(conversation, { role: 'user', content: text });
+    const updated = await base44.agents.addMessage(conv, { role: 'user', content: text });
+    conversationRef.current = updated;
     setConversation(updated);
     setMessages(updated.messages || []);
     setSending(false);
