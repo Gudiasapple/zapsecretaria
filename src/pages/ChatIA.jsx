@@ -43,12 +43,11 @@ export default function ChatIA() {
           agent_name: 'dra_maria',
           metadata: { name: 'Teste via Dashboard' },
         });
-        // Aguarda a conversa ser persistida no servidor
-        await new Promise(r => setTimeout(r, 1000));
         convRef.current = conv;
       }
 
-      const updated = await base44.agents.addMessage(convRef.current, { role: 'user', content: text });
+      const convId = convRef.current?.id || convRef.current;
+      const updated = await base44.agents.addMessage(convId, { role: 'user', content: text });
       convRef.current = updated;
       setMessages(updated.messages?.filter(m => m.role === 'user' || m.role === 'assistant') || []);
     } catch (e) {
