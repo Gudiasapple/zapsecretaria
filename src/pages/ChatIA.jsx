@@ -10,7 +10,7 @@ export default function ChatIA() {
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState('');
   const [sending, setSending] = useState(false);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const convRef = useRef(null);
   const messagesEndRef = useRef(null);
