@@ -123,6 +123,11 @@ export default function ChatIA() {
               <p className={cn("text-sm", dark ? "text-white/40" : "text-zinc-400")}>Iniciando conversa...</p>
             </div>
           </div>
+        ) : error ? (
+          <div className="flex flex-col items-center justify-center h-full gap-3">
+            <p className="text-sm text-rose-400">{error}</p>
+            <button onClick={handleNewChat} className="px-4 py-2 rounded-xl bg-amber-500 text-amber-950 text-xs font-semibold">Tentar novamente</button>
+          </div>
         ) : visibleMessages.length === 0 ? (
           <div className="flex gap-3 justify-start">
             <div className={cn("w-8 h-8 rounded-xl flex items-center justify-center flex-shrink-0 mt-0.5", dark ? "bg-amber-500/15" : "bg-amber-100")}>
