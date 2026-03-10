@@ -277,9 +277,9 @@ export default function Agenda() {
 
       {/* Dialog for Form */}
       <Dialog open={showForm} onOpenChange={setShowForm}>
-        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+        <DialogContent className={cn("max-w-2xl max-h-[90vh] overflow-y-auto", dark ? "bg-[#13131C] border-white/10 text-white" : "")}>
           <DialogHeader>
-            <DialogTitle>
+            <DialogTitle className={dark ? "text-white" : ""}>
               {selectedAgendamento?.id ? 'Editar Agendamento' : 'Novo Agendamento'}
             </DialogTitle>
           </DialogHeader>
